@@ -5,7 +5,7 @@ self.addEventListener('push', function(event) {
 
   var title = 'title: ServiceWorker say: you got a push message';
   var body = 'body: ServiceWorker say: you got a push message';
-  var icon = '';
+  var icon = 'http://en.gravatar.com/userimage/46923021/fde5f27848c4ce416f32103597ca7216.jpeg';
   var tag = 'simple-push-demo-notification-tag';
 
   event.waitUntil(
@@ -16,8 +16,6 @@ self.addEventListener('push', function(event) {
     })
   );
 });
-
-
 
 self.addEventListener('notificationclick', function(event) {
   console.log('On notification click: ', event.notification.tag);
@@ -32,10 +30,12 @@ self.addEventListener('notificationclick', function(event) {
   }).then(function(clientList) {
     for (var i = 0; i < clientList.length; i++) {
       var client = clientList[i];
+      console.log('client.url', client.url);
       if (client.url == '/' && 'focus' in client)
         return client.focus();
     }
     if (clients.openWindow)
+      // window.open('http://www.mozilla.org', '_blank');
       return clients.openWindow('/');
   }));
 

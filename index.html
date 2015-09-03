@@ -6,9 +6,12 @@
     <script src='main.js'>
 </script>
 <body>
-<input id='msg_txt' value='Hi There'></input><button onclick='notifyMe()'>Ask Notification Permissions</button>
+<input id='msg_txt' value='Hi There'></input>
+<button onclick='notifyMe()'>pop Notification</button>
+<!-- <button onclick='checkNotifyProperites()'>Check Notification</button>
+ --><button onclick='closeNotification()'>closeNotification</button>
 <p></p>
-<button onclick='regSW()'>Init Service Worker</button>
+<button onclick='regSW()'>Init Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()'>Unregister Service Worker</button>
 <p></p>
 <button onclick='subscribe()'>subscribe to push</button>
 <p></p>
