@@ -113,3 +113,12 @@ function doXhr() {
 function writeLog(txt){
   document.getElementById("demo").innerHTML += txt + '<br>';
 }
+
+window.addEventListener('load', function() {
+  if (!('serviceWorker' in navigator)) {
+    writeLog('Your Browser doesn\'t support ServiceWorkers');
+  }
+  if (!(window.PushManager)){
+    writeLog("Your Browser doesn't support Push");
+  }
+});
