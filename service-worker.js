@@ -35,7 +35,6 @@ self.addEventListener('notificationclick', function(event) {
         return client.focus();
     }
     if (clients.openWindow)
-      // window.open('http://www.mozilla.org', '_blank');
       return clients.openWindow('/');
   }));
 

@@ -1,4 +1,6 @@
 var notification;
+var registration;
+var endpoint;
 
 function notifyMe() {
   // Let's check if the browser supports notifications
@@ -11,7 +13,6 @@ function notifyMe() {
   else if (Notification.permission === "granted"  ) {
     // If it's okay let's create a notification
     notification = new Notification(msg_txt.value);
-    // checkNotifyProperites(Notification);
     notification.onclick = function(){notify();};
   }
 
@@ -23,7 +24,6 @@ function notifyMe() {
       writeLog('Notification.permission: '+ Notification.permission);
       if (permission === "granted") {
         notification = new Notification("Hi there!");
-        // checkNotifyProperites(Notification);
         notification.onclick = function(){notify();};
       }
     });
@@ -38,7 +38,6 @@ function notify(){
   writeLog('notification.onclick: window.open mozilla.org');
   window.open('http://www.mozilla.org', '_blank');
 }
-var registration;
 
 function checkSW(){
   if(!registration){
@@ -59,6 +58,7 @@ function unregSW(){
     writeLog('unregister returned: '+ boolean);
   });
 }
+
 function regSW(){
   writeLog('regSW');
     if ('serviceWorker' in navigator) {
@@ -78,6 +78,7 @@ function subscribe(){
   // Do we already have a push message subscription?  
       serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
       .then(function(subscription) {
+          endpoint = subscription.endpoint;
           writeLog('subscribed: '+subscription);
           writeLog('endpoint:');
           writeLog('curl -I -X POST ' + subscription.endpoint);
@@ -88,6 +89,26 @@ function subscribe(){
   });
 }
 
+function doXhr() {
+    if (!endpoint || !registration){
+      writeLog('endpoint undefined');
+      return;
+    }
+    // Registration is a PUT call to the remote server.
+    var post = new XMLHttpRequest();
+    post.open('POST', endpoint);
+    // post.setRequestHeader("Content-Type",
+    //         "application/x-www-form-urlencoded");
+    post.onload=function(e) {
+        writeLog("xhr got data: " + e.target.response);
+    };
+    post.onerror=function(e) {
+        writeLog("received: " + e.total);
+    };
+
+    writeLog("Sending endpoint..." + endpoint);
+    post.send("push="+encodeURIComponent(endpoint));
+}
 
 function writeLog(txt){
   document.getElementById("demo").innerHTML += txt + '<br>';
