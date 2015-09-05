@@ -40,22 +40,26 @@ function notify(){
 }
 
 function checkSW(){
-  if(!registration){
-    writeLog('service worker not active');
+  writeLog('checking service worker');
+  if(typeof registration === 'undefined'){
+    writeLog('service worker registration is undefined');
     return;
   }
   if(registration.installing) {
     writeLog('Service worker installing');
   } else if(registration.waiting) {
-    writeLog('Service worker installed');
-  } else if(registration.active) {
+    writeLog('Service worker is waiting');
+  }
+  if(registration.active) {
     writeLog('Service worker active');
+  }else{
+    writeLog('service worker NOT active');
   }
 }
 
 function unregSW(){
   registration.unregister().then(function(boolean) {
-    writeLog('unregister returned: '+ boolean);
+    writeLog('reg.unregister() returned: '+ boolean);
   });
 }
 
@@ -67,7 +71,7 @@ function regSW(){
         checkSW(reg);
       }).catch(function(error) {
         // registration failed
-        console.log('Registration failed with ' + error);
+        console.log('Registration failed: ' + error);
       });
     }
 }
