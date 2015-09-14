@@ -2,6 +2,10 @@ var notification;
 var registration;
 var endpoint;
 
+function setClickHandler(noti){
+  noti.onclick = function(){notify();};
+}
+
 function notifyMe() {
   // Let's check if the browser supports notifications
   writeLog('Notification.permission: '+ Notification.permission);
@@ -13,7 +17,7 @@ function notifyMe() {
   else if (Notification.permission === "granted"  ) {
     // If it's okay let's create a notification
     notification = new Notification(msg_txt.value);
-    notification.onclick = function(){notify();};
+    setClickHandler(notification);
   }
 
   // Otherwise, we need to ask the user for permission
@@ -23,8 +27,8 @@ function notifyMe() {
       // If the user accepts, let's create a notification
       writeLog('Notification.permission: '+ Notification.permission);
       if (permission === "granted") {
-        notification = new Notification("Hi there!");
-        notification.onclick = function(){notify();};
+        notification = new Notification(msg_txt.value);
+        setClickHandler(notification);
       }
     });
   }
@@ -36,7 +40,7 @@ function closeNotification(){
 
 function notify(){
   writeLog('notification.onclick: window.open mozilla.org');
-  window.open('http://www.mozilla.org', '_blank');
+  window.open('http://www.mozilla.org', target_txt.value);
 }
 
 function checkSW(){
