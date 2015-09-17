@@ -7,7 +7,7 @@
     <script src='main.js'></script>
 </head
 <body onload="checkEnv()">
-    <p>Supports Fx42+, Chrome 44, Android Chrome</p>
+    <p>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
     <p>Notifications API</p>
     <input id='msg_txt' value='Hi There'></input>
     <button onclick='notifyMe()'>pop Notification</button>
@@ -22,8 +22,8 @@
     <button onclick='subscribe()'>subscribe to push</button>
     <p></p>
     <hr />
-    <p>Simulate application server pushing to user agent</p>
-    <button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button>
+    <button id='doXhr_btn' onclick='doXhr()' style="visibility:hidden">POST to push endpoint</button><br />
+    <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
     <p></p>
     <div id='demo'></div>
 </body>

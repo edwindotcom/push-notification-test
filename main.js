@@ -1,6 +1,8 @@
 var notification;
 var registration;
 var endpoint;
+var chrome_str;
+var count = 0;
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
@@ -10,7 +12,11 @@ function setClickHandler(noti){
   noti.onclick = function(){notify();};
 }
 
-
+function popNotification(){
+  notification = new Notification(msg_txt.value);
+  setClickHandler(notification);
+  msg_txt.value = msg_txt.value + '.';
+}
 
 function notifyMe() {
   // Let's check if the browser supports notifications
@@ -22,8 +28,7 @@ function notifyMe() {
   // Let's check whether notification permissions have already been granted
   else if (Notification.permission === "granted"  ) {
     // If it's okay let's create a notification
-    notification = new Notification(msg_txt.value);
-    setClickHandler(notification);
+    popNotification();
   }
 
   // Otherwise, we need to ask the user for permission
@@ -33,8 +38,7 @@ function notifyMe() {
       // If the user accepts, let's create a notification
       writeLog('Notification.permission: '+ Notification.permission);
       if (permission === "granted") {
-        notification = new Notification(msg_txt.value);
-        setClickHandler(notification);
+        popNotification();
       }
     });
   }
@@ -87,7 +91,6 @@ function regSW(){
 }
 
 function subscribe(){
-  checkEnv();
   navigator.serviceWorker.ready.then(
       function(serviceWorkerRegistration) {
   // Do we already have a push message subscription?  
@@ -104,8 +107,10 @@ function subscribe(){
             chrome_str += subscriptionId;
             chrome_str += '\\"]}"';
             writeLog(chrome_str);
+            document.getElementById("mailto_btn").style.visibility="visible";
           }else{
             writeLog('curl -I -X POST ' + subscription.endpoint);
+            document.getElementById("doXhr_btn").style.visibility="visible";
           }
 
       })
@@ -136,6 +141,10 @@ function doXhr() {
     post.send("push="+encodeURIComponent(endpoint));
 }
 
+function sendMail(){
+  window.location = "mailto:MYUSER@mozilla.com?subject=CURL_ME&body="+chrome_str;
+}
+
 function writeLog(txt){
   document.getElementById("demo").innerHTML += txt + '<br>';
 }
@@ -146,8 +155,5 @@ function checkEnv() {
   }
   if (!(window.PushManager)){
     writeLog("Your Browser doesn't support Push");
-  }
-  if (is_chrome){
-    document.getElementById("doXhr_btn").style.visibility="hidden";
   }
 }
