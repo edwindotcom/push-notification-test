@@ -2,9 +2,15 @@ var notification;
 var registration;
 var endpoint;
 
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
+var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
+
 function setClickHandler(noti){
   noti.onclick = function(){notify();};
 }
+
+
 
 function notifyMe() {
   // Let's check if the browser supports notifications
@@ -89,7 +95,18 @@ function subscribe(){
           endpoint = subscription.endpoint;
           writeLog('subscribed: '+subscription);
           writeLog('endpoint:');
-          writeLog('curl -I -X POST ' + subscription.endpoint);
+          if (is_chrome){
+            var endpointSections = endpoint.split('/');
+            var subscriptionId = endpointSections[endpointSections.length - 1];
+            chrome_str = 'curl --header "Authorization: key='+API_KEY+'"';
+            chrome_str += ' --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+            chrome_str += subscriptionId;
+            chrome_str += '\\"]}"';
+            writeLog(chrome_str);
+          }else{
+            writeLog('curl -I -X POST ' + subscription.endpoint);
+          }
+
       })
       .catch(function(err) {
           writeLog('Error during subscribe: '+err);
@@ -128,5 +145,8 @@ window.addEventListener('load', function() {
   }
   if (!(window.PushManager)){
     writeLog("Your Browser doesn't support Push");
+  }
+  if (!(is_chrome)){
+    document.getElementById("doXhr_btn").style.visibility="hidden";
   }
 });

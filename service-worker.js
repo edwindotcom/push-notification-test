@@ -1,11 +1,21 @@
 'use strict';
 
+function dumpObj(object){
+  console.log(':dumpObj:');
+  for (var property in object) {
+    console.log('::'+ property + ":" + object[property]);
+    if (object.hasOwnProperty(property)) {
+        console.log('::' + property + ":" + object[property]);
+    }
+}
+}
+
 self.addEventListener('push', function(event) {
   console.log('Received a push message', event);
 
   var title = 'title: ServiceWorker say: you got a push message';
   var body = 'body: ServiceWorker say: you got a push message';
-  var icon = 'http://en.gravatar.com/userimage/46923021/fde5f27848c4ce416f32103597ca7216.jpeg';
+  var icon = 'https://wiki.mozilla.org/images/thumb/a/ad/Mdn_logo-wordmark-full_color.png/480px-Mdn_logo-wordmark-full_color.png';
   var tag = 'simple-push-demo-notification-tag';
 
   event.waitUntil(
@@ -16,6 +26,34 @@ self.addEventListener('push', function(event) {
     })
   );
 });
+
+self.addEventListener('onpushsubscriptionchange', function(event) {
+  console.log('onpushsubscriptionchange: ', event);
+});
+
+self.addEventListener('registration', function(event) {
+  console.log('registration: ', event);
+  change();
+});
+
+self.addEventListener('activate', function(event) {
+  console.log('activate: ', event);
+  change();
+});
+
+self.addEventListener('install', function(event) {
+  console.log('install event: ', event);
+  change();
+});
+
+
+function change(){
+  console.log('self.clients: ', self.clients);
+  console.log('self.caches: ', self.caches);
+  // dumpObj(self.clients);
+  // dumpObj(self.caches);
+}
+
 
 self.addEventListener('notificationclick', function(event) {
   console.log('On notification click: ', event.notification.tag);
@@ -38,4 +76,31 @@ self.addEventListener('notificationclick', function(event) {
       return clients.openWindow('/');
   }));
 
+});
+
+self.addEventListener('install', function(event) { console.log('install event: ', event) });
+
+self.addEventListener('fetch', function(event) {
+  console.log('Handling fetch event for', event.request.url);
+
+  event.respondWith(
+    caches.match(event.request).then(function(response) {
+      if (response) {
+        console.log('Found response in cache:', response);
+
+        return response;
+      }
+      console.log('No response found in cache. About to fetch from network...');
+
+      return fetch(event.request).then(function(response) {
+        console.log('Response from network is:', response);
+
+        return response;
+      }).catch(function(error) {
+        console.error('Fetching failed:', error);
+
+        throw error;
+      });
+    })
+  );
 });

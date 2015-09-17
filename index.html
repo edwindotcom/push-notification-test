@@ -2,21 +2,26 @@
 <!doctype html>
 <html><head>
     <title>Push Notification Test</title>
-    <style></style>
-    <script src='main.js'>
-</script>
+    <link rel="manifest" href="manifest.json">
+    <script src='main.js'></script>
+</head
 <body>
+<p>Notifications API</p>
 <input id='msg_txt' value='Hi There'></input>
 <button onclick='notifyMe()'>pop Notification</button>
 <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
 <input id='target_txt' value='_blank'></input>
 <button onclick='closeNotification()'>closeNotification</button>
 <p></p>
+<hr />
+<p>Push API</p>
 <button onclick='regSW()'>Init Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()'>Unregister Service Worker</button>
 <p></p>
 <button onclick='subscribe()'>subscribe to push</button>
 <p></p>
-<button onclick='doXhr()'>POST to push endpoint</button>
+<hr />
+<p>Simulate application server pushing to user agent</p>
+<button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button>
 <p></p>
 <div id='demo'></div>
 </body></html>
