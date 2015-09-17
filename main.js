@@ -150,10 +150,15 @@ function writeLog(txt){
 }
 
 function checkEnv() {
+  console.log('checkEnv');
   if (!('serviceWorker' in navigator)) {
     writeLog('Your Browser doesn\'t support ServiceWorkers');
   }
   if (!(window.PushManager)){
     writeLog("Your Browser doesn't support Push");
   }
+  if (document.URL.indexOf('https') == -1){
+    writeLog("You need to be on https or localhost");
+  }
 }
+// checkEnv();
