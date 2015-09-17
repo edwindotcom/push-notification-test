@@ -1,29 +1,32 @@
 
 <!doctype html>
-<html><head>
+<html>
+<head>
     <title>Push Notification Test</title>
     <link rel="manifest" href="manifest.json">
     <script src='main.js'></script>
 </head
-<body>
-<p>Notifications API</p>
-<input id='msg_txt' value='Hi There'></input>
-<button onclick='notifyMe()'>pop Notification</button>
-<!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
-<input id='target_txt' value='_blank'></input>
-<button onclick='closeNotification()'>closeNotification</button>
-<p></p>
-<hr />
-<p>Push API</p>
-<button onclick='regSW()'>Init Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()'>Unregister Service Worker</button>
-<p></p>
-<button onclick='subscribe()'>subscribe to push</button>
-<p></p>
-<hr />
-<p>Simulate application server pushing to user agent</p>
-<button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button>
-<p></p>
-<div id='demo'></div>
-</body></html>
+<body onload="checkEnv()">
+    <p>Supports Fx42+, Chrome 44, Android Chrome</p>
+    <p>Notifications API</p>
+    <input id='msg_txt' value='Hi There'></input>
+    <button onclick='notifyMe()'>pop Notification</button>
+    <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
+    <input id='target_txt' value='_blank'></input>
+    <button onclick='closeNotification()'>closeNotification</button>
+    <p></p>
+    <hr />
+    <p>Push API</p>
+    <button onclick='regSW()'>Init Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()'>Unregister Service Worker</button>
+    <p></p>
+    <button onclick='subscribe()'>subscribe to push</button>
+    <p></p>
+    <hr />
+    <p>Simulate application server pushing to user agent</p>
+    <button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button>
+    <p></p>
+    <div id='demo'></div>
+</body>
+</html>
 
 

@@ -87,6 +87,7 @@ function regSW(){
 }
 
 function subscribe(){
+  checkEnv();
   navigator.serviceWorker.ready.then(
       function(serviceWorkerRegistration) {
   // Do we already have a push message subscription?  
@@ -139,14 +140,14 @@ function writeLog(txt){
   document.getElementById("demo").innerHTML += txt + '<br>';
 }
 
-window.addEventListener('load', function() {
+function checkEnv() {
   if (!('serviceWorker' in navigator)) {
     writeLog('Your Browser doesn\'t support ServiceWorkers');
   }
   if (!(window.PushManager)){
     writeLog("Your Browser doesn't support Push");
   }
-  if (!(is_chrome)){
+  if (is_chrome){
     document.getElementById("doXhr_btn").style.visibility="hidden";
   }
-});
+}
