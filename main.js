@@ -109,7 +109,7 @@ function subscribe(){
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility="visible";
           }else{
-            writeLog('curl -I -X POST ' + subscription.endpoint);
+            writeLog('curl -I -X --header "TTL: 60" POST ' + subscription.endpoint);
             document.getElementById("doXhr_btn").style.visibility="visible";
           }
 
