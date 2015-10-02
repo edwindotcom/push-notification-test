@@ -56,6 +56,7 @@ function closeNotification() {
  // Service Worker API
 function checkSW() {
   writeLog('checking service worker');
+
   if (typeof registration === 'undefined') {
     writeLog('service worker registration is undefined');
     return;
@@ -70,6 +71,16 @@ function checkSW() {
   } else {
     writeLog('service worker NOT active');
   }
+}
+
+function sendMsgToSW(){
+    sendMessage({
+        command: echo_txt.value,
+        url: 'url'})
+    .then(function(data) {
+        // If the promise resolves, just display a success message.
+        writeLog('messageChannel.port1.onmessage: ' + data);
+      });
 }
 
 function unregSW() {
@@ -105,8 +116,8 @@ function subscribe() {
           writeLog('subscribed: ' + subscription);
           writeLog('endpoint:');
 
-          sendMessage('Page says Hi');
-
+          document.getElementById("echo_txt").style.visibility = "visible";
+          document.getElementById("sendMsgToSW_btn").style.visibility = "visible";
           if (is_chrome) {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
@@ -173,6 +184,7 @@ function sendMail() {
 
 // }
 
+
 function sendMessage(message) {
   // This wraps the message posting/response in a promise, which will resolve if the response doesn't
   // contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
@@ -198,13 +210,13 @@ function sendMessage(message) {
 
 // event handlers
 
-window.onmessage = function(event) {
-  writeLog("window.onmessage: " + event.data);
-};
+// window.onmessage = function(event) {
+//   writeLog("window.onmessage: " + event.data);
+// };
 
-navigator.serviceWorker.onmessage = function(event) {
-  writeLog("navigator.serviceWorker.onmessage: " + event.data);
-};
+// navigator.serviceWorker.onmessage = function(event) {
+//   writeLog("navigator.serviceWorker.onmessage: " + event.data);
+// };
 
 // setup
 

@@ -27,6 +27,16 @@ self.addEventListener('push', function(event) {
   );
 });
 
+
+self.addEventListener('message', function(event) {
+  console.log('Handling message event:', event);
+  // event.ports[0] corresponds to the MessagePort that was transferred as part of the controlled page's
+  // call to controller.postMessage(). Therefore, event.ports[0].postMessage() will trigger the onmessage
+  // handler from the controlled page.
+  // It's up to you how to structure the messages that you send back; this is just one example.
+  event.ports[0].postMessage('SW echo: ' + event.data.command);
+});
+
 self.addEventListener('onpushsubscriptionchange', function(event) {
   console.log('onpushsubscriptionchange: ', event);
 });
@@ -80,27 +90,27 @@ self.addEventListener('notificationclick', function(event) {
 
 self.addEventListener('install', function(event) { console.log('install event: ', event) });
 
-self.addEventListener('fetch', function(event) {
-  console.log('Handling fetch event for', event.request.url);
+// self.addEventListener('fetch', function(event) {
+//   console.log('Handling fetch event for', event.request.url);
 
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      if (response) {
-        console.log('Found response in cache:', response);
+//   event.respondWith(
+//     caches.match(event.request).then(function(response) {
+//       if (response) {
+//         console.log('Found response in cache:', response);
 
-        return response;
-      }
-      console.log('No response found in cache. About to fetch from network...');
+//         return response;
+//       }
+//       console.log('No response found in cache. About to fetch from network...');
 
-      return fetch(event.request).then(function(response) {
-        console.log('Response from network is:', response);
+//       return fetch(event.request).then(function(response) {
+//         console.log('Response from network is:', response);
 
-        return response;
-      }).catch(function(error) {
-        console.error('Fetching failed:', error);
+//         return response;
+//       }).catch(function(error) {
+//         console.error('Fetching failed:', error);
 
-        throw error;
-      });
-    })
-  );
-});
+//         throw error;
+//       });
+//     })
+//   );
+// });
