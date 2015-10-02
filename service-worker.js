@@ -1,14 +1,5 @@
 'use strict';
 
-function dumpObj(object){
-  console.log(':dumpObj:');
-  for (var property in object) {
-    console.log('::'+ property + ":" + object[property]);
-    if (object.hasOwnProperty(property)) {
-        console.log('::' + property + ":" + object[property]);
-    }
-}
-}
 
 self.addEventListener('push', function(event) {
   console.log('Received a push message', event);
@@ -17,6 +8,8 @@ self.addEventListener('push', function(event) {
   var body = 'body: ServiceWorker say: you got a push message';
   var icon = 'https://wiki.mozilla.org/images/thumb/a/ad/Mdn_logo-wordmark-full_color.png/480px-Mdn_logo-wordmark-full_color.png';
   var tag = 'simple-push-demo-notification-tag';
+
+  sendMsg('SW: says hi');
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -27,36 +20,46 @@ self.addEventListener('push', function(event) {
   );
 });
 
+function sendMsg(msg){
+    self.clients.matchAll().then(function(clients) {
+      clients.forEach(function(client) {
+        client.postMessage(msg);
+        // sendMsg(client, 'checkWindowActive: '+client.url);
+        // sendMsg(client, 'checkWindowActive: '+ client.frameType + " | " + client.visibilityState);
+      });
+    });
+}
+
 self.addEventListener('onpushsubscriptionchange', function(event) {
-  console.log('onpushsubscriptionchange: ', event);
+  console.log('onpushsubscriptionchange: ' + event);
 });
 
 self.addEventListener('registration', function(event) {
-  console.log('registration: ', event);
-  change();
+  console.log('registration: ' + event);
 });
 
 self.addEventListener('activate', function(event) {
-  console.log('activate: ', event);
-  change();
+  console.log('activate: ' + event);
+  sendMsg('activate');
 });
 
 self.addEventListener('install', function(event) {
-  console.log('install event: ', event);
-  change();
+  console.log('install event: ' + event);
 });
 
+self.addEventListener('message', function(event) {
+  console.log('install event: ' + event.ports[0].postMessage("i recieved from page"));
+});
 
-function change(){
-  console.log('self.clients: ', self.clients);
-  console.log('self.caches: ', self.caches);
-  // dumpObj(self.clients);
-  // dumpObj(self.caches);
-}
-
+// self.clients.matchAll().then(function(clients) {
+//   clients.forEach(function(client) {
+//     console.log('postMessage:'+client);
+//     client.postMessage('SW: says hi');
+//   });
+// });
 
 self.addEventListener('notificationclick', function(event) {
-  console.log('On notification click: ', event.notification.tag);
+  console.log('On notification click: ' + event.notification.tag);
   // Android doesn’t close the notification when you click on it
   // See: http://crbug.com/463146
   event.notification.close();
@@ -78,29 +81,3 @@ self.addEventListener('notificationclick', function(event) {
 
 });
 
-self.addEventListener('install', function(event) { console.log('install event: ', event) });
-
-self.addEventListener('fetch', function(event) {
-  console.log('Handling fetch event for', event.request.url);
-
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      if (response) {
-        console.log('Found response in cache:', response);
-
-        return response;
-      }
-      console.log('No response found in cache. About to fetch from network...');
-
-      return fetch(event.request).then(function(response) {
-        console.log('Response from network is:', response);
-
-        return response;
-      }).catch(function(error) {
-        console.error('Fetching failed:', error);
-
-        throw error;
-      });
-    })
-  );
-});
