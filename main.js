@@ -8,13 +8,17 @@ var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 
-function setClickHandler(noti){
-  noti.onclick = function(){notify();};
+function writeLog(txt) {
+  document.getElementById("demo").innerHTML += txt + '<br>';
 }
 
+ // Notification API
 function popNotification(){
   notification = new Notification(msg_txt.value);
-  setClickHandler(notification);
+  notification.onclick = function() {
+    writeLog('notification.onclick: window.open mozilla.org');
+    window.open('http://www.mozilla.org', target_txt.value);
+  };
   msg_txt.value = msg_txt.value + '.';
 }
 
@@ -48,10 +52,7 @@ function closeNotification(){
   notification.close();
 }
 
-function notify(){
-  writeLog('notification.onclick: window.open mozilla.org');
-  window.open('http://www.mozilla.org', target_txt.value);
-}
+ // Service Worker API
 
 function checkSW(){
   writeLog('checking service worker');
@@ -149,6 +150,60 @@ function writeLog(txt){
   document.getElementById("demo").innerHTML += txt + '<br>';
 }
 
+// postMessage
+
+// function sendMessage(message) {
+//   writeLog('page::sendMessage() called:' + message);
+//   navigator.serviceWorker.ready.then(function(reg) {
+//     try {
+//       reg.active.postMessage({
+//         text: message
+//       }, [messageChannel && messageChannel.port2]);
+//     } catch (e) {
+//       // getting a cloning error in Firefox
+//       reg.active.postMessage({
+//         text: message
+//       });
+//     }
+//   });
+
+// }
+
+function sendMessage(message) {
+  // This wraps the message posting/response in a promise, which will resolve if the response doesn't
+  // contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
+  // controller.postMessage() and set up the onmessage handler independently of a promise, but this is
+  // a convenient wrapper.
+  return new Promise(function(resolve, reject) {
+    var messageChannel = new MessageChannel();
+    messageChannel.port1.onmessage = function(event) {
+      if (event.data.error) {
+        reject(event.data.error);
+      } else {
+        resolve(event.data);
+      }
+    };
+
+    // This sends the message data as well as transferring messageChannel.port2 to the service worker.
+    // The service worker can then use the transferred port to reply via postMessage(), which
+    // will in turn trigger the onmessage handler on messageChannel.port1.
+    // See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage
+    navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
+  });
+}
+
+// event handlers
+
+window.onmessage = function(event) {
+  writeLog("window.onmessage: " + event.data);
+};
+
+navigator.serviceWorker.onmessage = function(event) {
+  writeLog("navigator.serviceWorker.onmessage: " + event.data);
+};
+
+// setup
+
 function checkEnv() {
   console.log('checkEnv');
   if (!('serviceWorker' in navigator)) {
@@ -161,4 +216,3 @@ function checkEnv() {
     writeLog("You need to be on https or localhost");
   }
 }
-// checkEnv();
