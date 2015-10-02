@@ -103,13 +103,13 @@ function subscribe(){
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
             chrome_str = 'curl --header "Authorization: key='+API_KEY+'"';
-            chrome_str += ' --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+            chrome_str += ' --header "TTL: 60"  --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
             chrome_str += subscriptionId;
             chrome_str += '\\"]}"';
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility="visible";
           }else{
-            writeLog('curl -I -X --header "TTL: 60" POST ' + subscription.endpoint);
+            writeLog('curl -I -X POST --header "TTL: 60" ' + subscription.endpoint);
             document.getElementById("doXhr_btn").style.visibility="visible";
           }
 
