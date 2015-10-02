@@ -112,18 +112,17 @@ function subscribe() {
 
           sendMessage('Page says Hi');
 
-
           if (is_chrome) {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
             chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
             chrome_str += subscriptionId;
             chrome_str += '\\"]}"';
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility = "visible";
           } else {
-            writeLog('<p>curl -I -X POST ' + subscription.endpoint + '</p>');
+            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
             document.getElementById("doXhr_btn").style.visibility = "visible";
           }
 
