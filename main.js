@@ -10,6 +10,7 @@ var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
+  console.log(txt);
 }
 
  // Notification API
@@ -80,7 +81,10 @@ function sendMsgToSW(){
     .then(function(data) {
         // If the promise resolves, just display a success message.
         writeLog('messageChannel.port1.onmessage: ' + data);
-      });
+      }).catch(function(error) {
+      // registration failed
+      writeLog('Registration failed: ' + error);
+    });
 }
 
 function unregSW() {
@@ -204,7 +208,8 @@ function sendMessage(message) {
     // The service worker can then use the transferred port to reply via postMessage(), which
     // will in turn trigger the onmessage handler on messageChannel.port1.
     // See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage
-    navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
+    registration.active.postMessage(message, [messageChannel.port2]);
+    // navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
   });
 }
 
