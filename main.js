@@ -17,7 +17,12 @@ function writeLog(txt) {
  // Notification API
 
 function popNotification() {
-  notification = new Notification(msg_txt.value,{'requireInteraction':true});
+  var notificationOptions = {};
+  if(document.getElementById('reqInteraction_cb').checked){
+    notificationOptions = {'requireInteraction': true};
+  }
+
+  notification = new Notification(msg_txt.value, notificationOptions);
   notification.onclick = function() {
     writeLog('notification.onclick: window.open mozilla.org');
     window.open('http://www.mozilla.org', target_txt.value);
