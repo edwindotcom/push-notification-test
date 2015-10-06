@@ -21,7 +21,7 @@ function popNotification() {
   if(document.getElementById('reqInteraction_cb').checked){
     notificationOptions = {'requireInteraction': true};
   }
-
+  writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
   notification = new Notification(msg_txt.value, notificationOptions);
   notification.onclick = function() {
     writeLog('notification.onclick: window.open mozilla.org');
