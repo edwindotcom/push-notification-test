@@ -3,6 +3,7 @@ var registration;
 var endpoint;
 var chrome_str;
 var count = 0;
+var swc;
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
@@ -16,7 +17,7 @@ function writeLog(txt) {
  // Notification API
 
 function popNotification() {
-  notification = new Notification(msg_txt.value);
+  notification = new Notification(msg_txt.value,{'requireInteraction':true});
   notification.onclick = function() {
     writeLog('notification.onclick: window.open mozilla.org');
     window.open('http://www.mozilla.org', target_txt.value);
@@ -97,6 +98,10 @@ function regSW() {
   writeLog('registering service worker');
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(sw_txt.value).then(function(reg) {
+      // swc = navigator.serviceWorker.controller;
+      // writeLog('navigator.serviceWorker.controller: ' + swc);
+      // writeLog('getRegistration(): ' + swc.getRegistration());
+
       registration = reg;
       document.getElementById("unreg_btn").style.visibility = "visible";
       document.getElementById("subscribe_btn").style.visibility = "visible";

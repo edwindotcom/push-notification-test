@@ -15,8 +15,15 @@ self.addEventListener('push', function(event) {
 
   var title = 'title: ServiceWorker say: you got a push message';
   var body = 'body: ServiceWorker say: you got a push message';
-  var icon = 'https://wiki.mozilla.org/images/thumb/a/ad/Mdn_logo-wordmark-full_color.png/480px-Mdn_logo-wordmark-full_color.png';
+  var icon = 'icon.png';
   var tag = 'simple-push-demo-notification-tag';
+
+  event.waitUntil(clients.matchAll().then(function(clientList) {
+    for (var i = 0; i < clientList.length; i++) {
+      var client = clientList[i];
+      dumpObj(client);
+    }
+  }));
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -26,7 +33,6 @@ self.addEventListener('push', function(event) {
     })
   );
 });
-
 
 self.addEventListener('message', function(event) {
   console.log('Handling message event:', event);
@@ -47,11 +53,13 @@ self.addEventListener('registration', function(event) {
 });
 
 self.addEventListener('activate', function(event) {
+  event.waitUntil(self.clients.claim());
   console.log('activate: ', event);
   change();
 });
 
 self.addEventListener('install', function(event) {
+  event.waitUntil(self.skipWaiting());
   console.log('install event: ', event);
   change();
 });
