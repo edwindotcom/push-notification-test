@@ -18,9 +18,9 @@ function writeLog(txt) {
 
 function popNotification() {
   var notificationOptions = {};
-  if(document.getElementById('reqInteraction_cb').checked){
+  if(document.getElementById('ri_cb').value === 'true'){
     notificationOptions = {'requireInteraction': true};
-  }else{
+  }else if(document.getElementById('ri_cb').value === 'false'){
     notificationOptions = {'requireInteraction': false};
   }
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));

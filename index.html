@@ -11,9 +11,15 @@
     <p>Notifications API</p>
     <input id='msg_txt' value='Hi There'></input>
     <button onclick='notifyMe()'>pop Notification</button>
-    requireInteraction<input type='checkbox' id='reqInteraction_cb' value='true' checked="checked"></input> :: target
+    requireInteraction: 
+     <select id='ri_cb'>
+      <option value="default" selected>default</option>
+      <option value="true">true</option>
+      <option value="false">false</option>
+    </select> 
+    :: target:
     <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
-    <input id='target_txt' value='_blank'></input> :: 
+    <input id='target_txt' value='_blank'></input> <br /><br />
     <button onclick='closeNotification()'>closeNotification</button>
     <p></p>
     <hr />
