@@ -20,6 +20,8 @@ function popNotification() {
   var notificationOptions = {};
   if(document.getElementById('reqInteraction_cb').checked){
     notificationOptions = {'requireInteraction': true};
+  }else{
+    notificationOptions = {'requireInteraction': false};
   }
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
   notification = new Notification(msg_txt.value, notificationOptions);
