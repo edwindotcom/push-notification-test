@@ -9,9 +9,12 @@
 <body onload="checkEnv()">
     <p>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
     <p>Notifications API</p>
-    <input id='msg_txt' value='Hi There'></input>
-    <button onclick='notifyMe()'>pop Notification</button>
-    <input id='icon_txt' value='icon.png'>
+    Title: <input id='msg_txt' value='Hi There'></input>
+
+    Icon:
+    <input id='icon_txt' value='icon.png'></input><br />
+    Body Text:
+    <input id='body_txt' value='body text here'></input><br />
     requireInteraction: 
      <select id='ri_cb'>
       <option value="default" selected>default</option>
@@ -20,7 +23,8 @@
     </select> 
     :: target:
     <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
-    <input id='target_txt' value='_blank'></input> <br /><br />
+    <input id='target_txt' value='_blank'></input> <br />
+    <button onclick='notifyMe()'>pop Notification</button> 
     <button onclick='closeNotification()'>closeNotification</button>
     <p></p>
     <hr />
