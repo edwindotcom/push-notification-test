@@ -23,6 +23,8 @@ function popNotification() {
   }else if(document.getElementById('ri_cb').value === 'false'){
     notificationOptions = {'requireInteraction': false};
   }
+  notificationOptions = {'icon': document.getElementById('icon_txt').value};
+
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
   notification = new Notification(msg_txt.value, notificationOptions);
   notification.onclick = function() {
