@@ -2,15 +2,15 @@ var notification;
 var registration;
 var endpoint;
 var chrome_str;
-var count = 0;
-var swc;
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 
+var demoEl = document.getElementById('demo');
+
 function writeLog(txt) {
-  document.getElementById("demo").innerHTML += txt + '<br>';
+  demoEl.innerHTML += txt + '<br/>';
   console.log(txt);
 }
 
@@ -18,9 +18,9 @@ function writeLog(txt) {
 
 function popNotification() {
   var notificationOptions = {};
-  if(document.getElementById('ri_cb').value === 'true'){
+  if (document.getElementById('ri_cb').value === 'true'){
     notificationOptions = {'requireInteraction': true};
-  }else if(document.getElementById('ri_cb').value === 'false'){
+  } else if(document.getElementById('ri_cb').value === 'false'){
     notificationOptions = {'requireInteraction': false};
   }
   notificationOptions.icon = document.getElementById('icon_txt').value;
@@ -86,16 +86,16 @@ function checkSW() {
 }
 
 function sendMsgToSW(){
-    sendMessage({
-        command: echo_txt.value,
-        url: 'url'})
-    .then(function(data) {
-        // If the promise resolves, just display a success message.
-        writeLog('messageChannel.port1.onmessage: ' + data);
-      }).catch(function(error) {
-      // registration failed
-      writeLog('Registration failed: ' + error);
-    });
+  sendMessage({
+    command: echo_txt.value,
+    url: 'url'
+  }).then(function(data) {
+    // If the promise resolves, just display a success message.
+    writeLog('messageChannel.port1.onmessage: ' + data);
+  }).catch(function(error) {
+    // registration failed
+    writeLog('Registration failed: ' + error);
+  });
 }
 
 function unregSW() {
@@ -113,8 +113,9 @@ function regSW() {
       // writeLog('getRegistration(): ' + swc.getRegistration());
 
       registration = reg;
-      document.getElementById("unreg_btn").style.visibility = "visible";
-      document.getElementById("subscribe_btn").style.visibility = "visible";
+
+      document.getElementById("unreg_btn").classList.remove('hidden');
+      document.getElementById("subscribe_btn").classList.remove('hidden');
       writeLog('registered service worker. scope: ' + registration.scope);
     }).catch(function(error) {
       // registration failed
@@ -126,35 +127,32 @@ function regSW() {
 function subscribe() {
   navigator.serviceWorker.ready.then(
     function(serviceWorkerRegistration) {
-      // Do we already have a push message subscription?  
+      // Do we already have a push message subscription?
       serviceWorkerRegistration.pushManager.subscribe({
-          userVisibleOnly: true
-        })
-        .then(function(subscription) {
-          endpoint = subscription.endpoint;
-          writeLog('subscribed: ' + subscription);
-          writeLog('endpoint:');
+        userVisibleOnly: true
+      }).then(function(subscription) {
+        endpoint = subscription.endpoint;
+        writeLog('subscribed: ' + subscription);
+        writeLog('endpoint:');
 
-          document.getElementById("echo_txt").style.visibility = "visible";
-          document.getElementById("sendMsgToSW_btn").style.visibility = "visible";
-          if (is_chrome) {
-            var endpointSections = endpoint.split('/');
-            var subscriptionId = endpointSections[endpointSections.length - 1];
-            chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
-            chrome_str += subscriptionId;
-            chrome_str += '\\"]}"';
-            writeLog(chrome_str);
-            document.getElementById("mailto_btn").style.visibility = "visible";
-          } else {
-            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-            document.getElementById("doXhr_btn").style.visibility = "visible";
-          }
-
-        })
-        .catch(function(err) {
-          writeLog('Error during subscribe: ' + err);
-        });
+        document.getElementById("echo_txt").className = '';
+        document.getElementById("sendMsgToSW_btn").classList.remove('hidden');
+        if (is_chrome) {
+          var endpointSections = endpoint.split('/');
+          var subscriptionId = endpointSections[endpointSections.length - 1];
+          chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
+          chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+          chrome_str += subscriptionId;
+          chrome_str += '\\"]}"';
+          writeLog(chrome_str);
+          document.getElementById("mailto_btn").classList.remove('hidden');
+        } else {
+          writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
+          document.getElementById("doXhr_btn").classList.remove('hidden');
+        }
+      }).catch(function(err) {
+        writeLog('Error during subscribe: ' + err);
+      });
     });
 }
 
@@ -252,5 +250,4 @@ function checkEnv() {
     window.location = document.URL.replace("http://", "https://");
     writeLog("You need to be on https or localhost");
   }
-
 }

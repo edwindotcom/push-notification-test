@@ -1,50 +1,80 @@
-
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Push Notification Test</title>
-    <link rel="manifest" href="manifest.json">
-    <script src='main.js'></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Push Notification Test</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
-<body onload="checkEnv()">
-    <p>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
-    <p>Notifications API</p>
-    Title: <input id='msg_txt' value='Hi There'></input>
+<body onload="checkEnv();">
 
-    Icon:
-    <input id='icon_txt' value='icon.png'></input><br />
-    Body Text:
-    <input id='body_txt' value='body text here'></input><br />
-    requireInteraction: 
-     <select id='ri_cb'>
-      <option value="default" selected>default</option>
-      <option value="true">true</option>
-      <option value="false">false</option>
-    </select> 
-    :: target:
-    <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
-    <input id='target_txt' value='_blank'></input> <br />
-    <button onclick='notifyMe()'>pop Notification</button> 
-    <button onclick='closeNotification()'>closeNotification</button>
-    <p></p>
-    <hr />
-    <p>Push API</p>
-<!-- <select  id='sw_txt'>
-  <option value="service-worker.js" selected>service-worker.js</option>
-  <option value="swc.js">collapse 2 events</option>
-</select> -->
-<input id='sw_txt' value='service-worker.js'></input>
-    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
-    <p></p>
-    <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
-    <p></p>
-    <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">sendMsgToSW</button>
-    <hr />
-    <button id='doXhr_btn' onclick='doXhr()' style="visibility:hidden">POST to push endpoint</button><br />
-    <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
-    <p></p>
-    <div id='demo'></div>
+    <a href="https://github.com/edmoz/push-notification-test" target="edmoz"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+
+  <div class="container">
+    <h1>Supports Fx42+, Chrome 44, Android Chrome 44</h1>
+
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <h2>Notifications API</h2>
+      </header>
+
+      <div class="panel-body">
+        <div class="form-group">
+          <label>Title: <input id="msg_txt" value="Hi There" /></label>
+        </div>
+        <div class="form-group">
+          <label>Icon: <input id="icon_txt" value="icon.png" /></label>
+        </div>
+        <div class="form-group">
+          <label>Body Text: <input id="body_txt" value="body text here" /></label>
+        </div>
+        <div class="form-group">
+          <label for="ri_cb">requireInteraction:</label>
+          <select id="ri_cb" name="ri_cb">
+            <option value="default" selected>default</option>
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>:: target: <input id="target_txt" value="_blank" /></label>
+        </div>
+        <button onclick="notifyMe();" class="btn">pop Notification</button>
+        <button onclick="closeNotification();" class="btn">closeNotification</button>
+      </div>
+    </section>
+
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <h2>Push API</h2>
+      </header>
+
+      <div class="panel-body">
+        <input id="sw_txt" value="service-worker.js" />
+        <button onclick="regSW();" class="btn">register Service Worker</button>
+        <button onclick="checkSW(registration);" class="btn">Check Service Worker</button>
+        <button onclick="unregSW();" id="unreg_btn" class="btn hidden">Unregister Service Worker</button>
+        <p></p>
+        <button onclick="subscribe();" id="subscribe_btn" class="btn hidden">subscribe to push</button>
+        <p></p>
+        <input id="echo_txt" value="HelloWorld" class="btn hidden" />
+        <button onclick="sendMsgToSW();" id="sendMsgToSW_btn" class="btn hidden">sendMsgToSW</button>
+        <button id="doXhr_btn" onclick="doXhr();" class="btn hidden">POST to push endpoint</button>
+        <button id="mailto_btn" onclick="sendMail();" class="btn hidden">mailto:CURL string</button>
+      </div>
+    </section>
+
+    <section class="well">
+      <h2>Output</h2>
+      <pre id="demo"></pre>
+    </section>
+
+    <strong class="text-muted pull-right">Powered by <a href="https://github.com/edmoz">edmoz</a>.</strong>
+  </div>
+
+  <script src="main.js"></script>
+
 </body>
 </html>
-
-
