@@ -31,30 +31,13 @@ function popNotification() {
   }
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
-  writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
 
-  if(is_chrome){
-    // Now create the notification
-    chrome.notifications.create('reminder', {
-        type: 'basic',
-        iconUrl: icon_txt,
-        title: title_txt,
-        message: body_txt
-     }, function(notificationId) {
-          writeLog('chrome noti_id:'+notificationId);
-     });
-    chrome.notifications.onClicked.addListener(function( notificationId ) {
-      writeLog('notification.onclick: window.open mozilla.org');
-      window.open('http://www.mozilla.org', target_txt);
-      chrome.notifications.clear(notificationId, function() {});
-    });
-  }else{
-    notification = new Notification(title_txt, notificationOptions);
-    notification.onclick = function() {
-      writeLog('notification.onclick: window.open mozilla.org');
-      window.open('http://www.mozilla.org', target_txt);
-    };
-  }
+  writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
+  notification = new Notification(title_txt, notificationOptions);
+  notification.onclick = function() {
+    writeLog('notification.onclick: window.open mozilla.org');
+    window.open('http://www.mozilla.org', target_txt);
+  };
   msg_txt.value = msg_txt.value + '.';
 }
 
