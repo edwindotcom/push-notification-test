@@ -17,19 +17,20 @@ function writeLog(txt) {
  // Notification API
 
 function popNotification() {
-  var ri_cb = document.getElementById('ri_cb').value;
-  var icon_txt = notificationOptions.icon = document.getElementById('icon_txt').value;
-  var body_txt = notificationOptions.body = document.getElementById('body_txt').value;
-  var target_txt = notificationOptions.body = document.getElementById('target_txt').value;
-  var title_txt = document.getElementById('msg_txt').value;
   var notificationOptions = {};
+  var title_txt = document.getElementById('msg_txt').value;
+  var ri_cb = document.getElementById('ri_cb').value;
+  var icon_txt = document.getElementById('icon_txt').value;
+  var body_txt = document.getElementById('body_txt').value;
+  var target_txt = document.getElementById('target_txt').value;
 
   if(ri_cb === 'true'){
     notificationOptions.requireInteraction = true;
   }else if(ri_cb === 'false'){
     notificationOptions.requireInteraction = false;
   }
-
+  notificationOptions.body = body_txt;
+  notificationOptions.icon = icon_txt;
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
 
   if(is_chrome){
