@@ -17,21 +17,43 @@ function writeLog(txt) {
  // Notification API
 
 function popNotification() {
+  var ri_cb = document.getElementById('ri_cb').value;
+  var icon_txt = notificationOptions.icon = document.getElementById('icon_txt').value;
+  var body_txt = notificationOptions.body = document.getElementById('body_txt').value;
+  var target_txt = notificationOptions.body = document.getElementById('target_txt').value;
+  var title_txt = document.getElementById('msg_txt').value;
   var notificationOptions = {};
-  if(document.getElementById('ri_cb').value === 'true'){
-    notificationOptions = {'requireInteraction': true};
-  }else if(document.getElementById('ri_cb').value === 'false'){
-    notificationOptions = {'requireInteraction': false};
+
+  if(ri_cb === 'true'){
+    notificationOptions.requireInteraction = true;
+  }else if(ri_cb === 'false'){
+    notificationOptions.requireInteraction = false;
   }
-  notificationOptions.icon = document.getElementById('icon_txt').value;
-  notificationOptions.body = document.getElementById('body_txt').value;
 
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
-  notification = new Notification(msg_txt.value, notificationOptions);
-  notification.onclick = function() {
-    writeLog('notification.onclick: window.open mozilla.org');
-    window.open('http://www.mozilla.org', target_txt.value);
-  };
+
+  if(is_chrome){
+    // Now create the notification
+    chrome.notifications.create('reminder', {
+        type: 'basic',
+        iconUrl: icon_txt,
+        title: title_txt,
+        message: body_txt
+     }, function(notificationId) {
+          writeLog('chrome noti_id:'+notificationId);
+     });
+    chrome.notifications.onClicked.addListener(function( notificationId ) {
+      writeLog('notification.onclick: window.open mozilla.org');
+      window.open('http://www.mozilla.org', target_txt);
+      chrome.notifications.clear(notificationId, function() {});
+    });
+  }else{
+    notification = new Notification(title_txt, notificationOptions);
+    notification.onclick = function() {
+      writeLog('notification.onclick: window.open mozilla.org');
+      window.open('http://www.mozilla.org', target_txt);
+    };
+  }
   msg_txt.value = msg_txt.value + '.';
 }
 
