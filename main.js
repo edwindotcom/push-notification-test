@@ -31,9 +31,11 @@ function popNotification() {
   }
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
+  notificationOptions.title = title_txt;
+
 
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
-  notification = new Notification(title_txt, notificationOptions);
+  notification = new Notification(title_txt);
   notification.onclick = function() {
     writeLog('notification.onclick: window.open mozilla.org');
     window.open('http://www.mozilla.org', target_txt);
@@ -113,12 +115,10 @@ function unregSW() {
 function regSW() {
   writeLog('registering service worker');
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(sw_txt.value).then(function(reg) {
+    navigator.serviceWorker.register(sw_txt.value).then(function(registration) {
       // swc = navigator.serviceWorker.controller;
       // writeLog('navigator.serviceWorker.controller: ' + swc);
       // writeLog('getRegistration(): ' + swc.getRegistration());
-
-      registration = reg;
       document.getElementById("unreg_btn").style.visibility = "visible";
       document.getElementById("subscribe_btn").style.visibility = "visible";
       writeLog('registered service worker. scope: ' + registration.scope);
@@ -154,7 +154,8 @@ function subscribe() {
             document.getElementById("mailto_btn").style.visibility = "visible";
           } else {
             writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-            document.getElementById("doXhr_btn").style.visibility = "visible";
+            document.getElementById("mailto_btn").style.visibility = "visible";
+            document.getElementById("xhr_msg").style.visibility = "visible";
           }
 
         })

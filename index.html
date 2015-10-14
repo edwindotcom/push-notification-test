@@ -1,16 +1,21 @@
-
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Push Notification Test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="manifest" href="manifest.json">
     <script src='main.js'></script>
+
 </head>
 <body onload="checkEnv()">
     <p>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
+    <hr />
     <p>Notifications API</p>
-    Title: <input id='msg_txt' value='Hi There'></input>
-
+    Title: <input id='msg_txt' value='Hi There'></input><br />
     Icon:
     <input id='icon_txt' value='icon.png'></input><br />
     Body Text:
@@ -20,8 +25,8 @@
       <option value="default" selected>default</option>
       <option value="true">true</option>
       <option value="false">false</option>
-    </select> 
-    :: target:
+    </select> <br />
+    Target:
     <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
     <input id='target_txt' value='_blank'></input> <br />
     <button onclick='notifyMe()'>pop Notification</button> 
@@ -40,7 +45,7 @@
     <p></p>
     <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">sendMsgToSW</button>
     <hr />
-    <button id='doXhr_btn' onclick='doXhr()' style="visibility:hidden">POST to push endpoint</button><br />
+    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button> <- CORS error working waiting on a deploy to fix</div><br />
     <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
     <p></p>
     <div id='demo'></div>
