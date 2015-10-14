@@ -35,7 +35,7 @@ function popNotification() {
 
 
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
-  notification = new Notification(title_txt);
+  notification = new Notification(title_txt, notificationOptions);
   notification.onclick = function() {
     writeLog('notification.onclick: window.open mozilla.org');
     window.open('http://www.mozilla.org', target_txt);
