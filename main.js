@@ -10,31 +10,31 @@ var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 
 function writeLog(txt) {
-  document.getElementById("demo").innerHTML += txt + '<br>';
+  document.getElementById("demo").innerHTML += txt + '<br/>';
   console.log(txt);
 }
 
- // Notification API
+// Notification API
 
 function popNotification() {
-  var notificationOptions = {};
   var title_txt = document.getElementById('msg_txt').value;
   var ri_cb = document.getElementById('ri_cb').value;
   var icon_txt = document.getElementById('icon_txt').value;
   var body_txt = document.getElementById('body_txt').value;
   var target_txt = document.getElementById('target_txt').value;
+  var notificationOptions = {
+    body: body_txt,
+    icon: icon_txt,
+    title: title_txt
+  };
 
-  if(ri_cb === 'true'){
+  if (ri_cb === 'true') {
     notificationOptions.requireInteraction = true;
-  }else if(ri_cb === 'false'){
+  } else if (ri_cb === 'false') {
     notificationOptions.requireInteraction = false;
   }
-  notificationOptions.body = body_txt;
-  notificationOptions.icon = icon_txt;
-  notificationOptions.title = title_txt;
 
-
-  writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
+  writeLog('notificationOptions: ' + JSON.stringify(notificationOptions));
   notification = new Notification(title_txt, notificationOptions);
   notification.onclick = function() {
     writeLog('notification.onclick: window.open mozilla.org');
@@ -46,23 +46,23 @@ function popNotification() {
 function notifyMe() {
   // Let's check if the browser supports notifications
   writeLog('Notification.permission: ' + Notification.permission);
-  if (!("Notification" in window)) {
-    alert("This browser does not support desktop notification");
+  if (!('Notification' in window)) {
+    alert('This browser does not support desktop notification');
   }
 
   // Let's check whether notification permissions have already been granted
-  else if (Notification.permission === "granted") {
+  else if (Notification.permission === 'granted') {
     // If it's okay let's create a notification
     popNotification();
   }
 
   // Otherwise, we need to ask the user for permission
-  else if (Notification.permission !== 'denied' || Notification.permission === "default") {
+  else if (Notification.permission !== 'denied' || Notification.permission === 'default') {
     writeLog('requesting Notification Permission');
     Notification.requestPermission(function(permission) {
       // If the user accepts, let's create a notification
       writeLog('Notification.permission: ' + Notification.permission);
-      if (permission === "granted") {
+      if (permission === 'granted') {
         popNotification();
       }
     });
@@ -107,8 +107,8 @@ function sendMsgToSW(){
 }
 
 function unregSW() {
-  registration.unregister().then(function(boolean) {
-    writeLog('reg.unregister() returned: ' + boolean);
+  registration.unregister().then(function(bool) {
+    writeLog('reg.unregister() returned: ' + bool);
   });
 }
 
@@ -119,8 +119,8 @@ function regSW() {
       // swc = navigator.serviceWorker.controller;
       // writeLog('navigator.serviceWorker.controller: ' + swc);
       // writeLog('getRegistration(): ' + swc.getRegistration());
-      document.getElementById("unreg_btn").style.visibility = "visible";
-      document.getElementById("subscribe_btn").style.visibility = "visible";
+      document.getElementById('unreg_btn').style.visibility = 'visible';
+      document.getElementById('subscribe_btn').style.visibility = 'visible';
       writeLog('registered service worker. scope: ' + registration.scope);
     }).catch(function(error) {
       // registration failed
@@ -132,7 +132,7 @@ function regSW() {
 function subscribe() {
   navigator.serviceWorker.ready.then(
     function(serviceWorkerRegistration) {
-      // Do we already have a push message subscription?  
+      // Do we already have a push message subscription?
       serviceWorkerRegistration.pushManager.subscribe({
           userVisibleOnly: true
         })
@@ -141,8 +141,8 @@ function subscribe() {
           writeLog('subscribed: ' + subscription);
           writeLog('endpoint:');
 
-          document.getElementById("echo_txt").style.visibility = "visible";
-          document.getElementById("sendMsgToSW_btn").style.visibility = "visible";
+          document.getElementById('echo_txt').style.visibility = 'visible';
+          document.getElementById('sendMsgToSW_btn').style.visibility = 'visible';
           if (is_chrome) {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
@@ -151,11 +151,11 @@ function subscribe() {
             chrome_str += subscriptionId;
             chrome_str += '\\"]}"';
             writeLog(chrome_str);
-            document.getElementById("mailto_btn").style.visibility = "visible";
+            document.getElementById('mailto_btn').style.visibility = 'visible';
           } else {
             writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-            document.getElementById("mailto_btn").style.visibility = "visible";
-            document.getElementById("xhr_msg").style.visibility = "visible";
+            document.getElementById('mailto_btn').style.visibility = 'visible';
+            document.getElementById('xhr_msg').style.visibility = 'visible';
           }
 
         })
@@ -176,19 +176,19 @@ function doXhr() {
   // post.setRequestHeader("Content-Type",
   //         "application/x-www-form-urlencoded");
   post.onload = function(e) {
-    writeLog("xhr got data: " + e.target.response);
+    writeLog('xhr got data: ' + e.target.response);
   };
   post.onerror = function(e) {
     // writeLog("received: " + e);
-    writeLog("status: " + post.status);
+    writeLog('status: ' + post.status);
   };
 
-  writeLog("Sending endpoint..." + endpoint);
-  post.send("push=" + encodeURIComponent(endpoint));
+  writeLog('Sending endpoint...' + endpoint);
+  post.send('push=' + encodeURIComponent(endpoint));
 }
 
 function sendMail() {
-  window.location = "mailto:MYUSER@mozilla.com?subject=CURL_ME&body=" + chrome_str;
+  window.location = 'mailto:MYUSER@mozilla.com?subject=CURL_ME&body=' + chrome_str;
 }
 
 // postMessage
@@ -249,15 +249,15 @@ function sendMessage(message) {
 
 function checkEnv() {
   console.log('checkEnv');
+  document.getElementById('userAgent').innerHTML = navigator.userAgent;
   if (!('serviceWorker' in navigator)) {
     writeLog('Your Browser doesn\'t support ServiceWorkers');
   }
   if (!(window.PushManager)) {
-    writeLog("Your Browser doesn't support Push");
+    writeLog('Your Browser doesn\'t support Push');
   }
   if (document.URL.indexOf('https') === -1 && document.URL.indexOf('localhost') === -1) {
-    window.location = document.URL.replace("http://", "https://");
-    writeLog("You need to be on https or localhost");
+    window.location = document.URL.replace('http://', 'https://');
+    writeLog('You need to be on https or localhost');
   }
-
 }
