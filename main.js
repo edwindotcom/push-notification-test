@@ -1,5 +1,6 @@
 var notification;
 var registration;
+var subscription;
 var endpoint;
 var chrome_str;
 var count = 0;
@@ -115,10 +116,11 @@ function unregSW() {
 function regSW() {
   writeLog('registering service worker');
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(sw_txt.value).then(function(registration) {
+    navigator.serviceWorker.register(sw_txt.value).then(function(reg) {
       // swc = navigator.serviceWorker.controller;
       // writeLog('navigator.serviceWorker.controller: ' + swc);
       // writeLog('getRegistration(): ' + swc.getRegistration());
+      registration = reg;
       document.getElementById("unreg_btn").style.visibility = "visible";
       document.getElementById("subscribe_btn").style.visibility = "visible";
       writeLog('registered service worker. scope: ' + registration.scope);
@@ -136,7 +138,8 @@ function subscribe() {
       serviceWorkerRegistration.pushManager.subscribe({
           userVisibleOnly: true
         })
-        .then(function(subscription) {
+        .then(function(sub) {
+          subscription = sub;
           endpoint = subscription.endpoint;
           writeLog('subscribed: ' + subscription);
           writeLog('endpoint:');
@@ -170,21 +173,22 @@ function doXhr() {
     writeLog('endpoint undefined');
     return;
   }
-  // Registration is a PUT call to the remote server.
-  var post = new XMLHttpRequest();
-  post.open('POST', endpoint);
-  // post.setRequestHeader("Content-Type",
-  //         "application/x-www-form-urlencoded");
-  post.onload = function(e) {
-    writeLog("xhr got data: " + e.target.response);
-  };
-  post.onerror = function(e) {
-    // writeLog("received: " + e);
-    writeLog("status: " + post.status);
-  };
+  webPush(subscription, 'hello world!');
+  // // Registration is a PUT call to the remote server.
+  // var post = new XMLHttpRequest();
+  // post.open('POST', endpoint);
+  // // post.setRequestHeader("Content-Type",
+  // //         "application/x-www-form-urlencoded");
+  // post.onload = function(e) {
+  //   writeLog("xhr got data: " + e.target.response);
+  // };
+  // post.onerror = function(e) {
+  //   // writeLog("received: " + e);
+  //   writeLog("status: " + post.status);
+  // };
 
-  writeLog("Sending endpoint..." + endpoint);
-  post.send("push=" + encodeURIComponent(endpoint));
+  // writeLog("Sending endpoint..." + endpoint);
+  // post.send("push=" + encodeURIComponent(endpoint));
 }
 
 function sendMail() {
