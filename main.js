@@ -167,28 +167,33 @@ function subscribe() {
         });
     });
 }
+function doWebPush(){
+    writeLog('sending webPush msg - open console to see network errors');
+    webpush(subscription, 'Hello World!').then(function(response){
+      writeLog('webpush returned: ' + response.text);
+    });
 
+}
 function doXhr() {
   if (!endpoint || !registration) {
     writeLog('endpoint undefined');
     return;
   }
-  webPush(subscription, 'hello world!');
-  // // Registration is a PUT call to the remote server.
-  // var post = new XMLHttpRequest();
-  // post.open('POST', endpoint);
-  // // post.setRequestHeader("Content-Type",
-  // //         "application/x-www-form-urlencoded");
-  // post.onload = function(e) {
-  //   writeLog("xhr got data: " + e.target.response);
-  // };
-  // post.onerror = function(e) {
-  //   // writeLog("received: " + e);
-  //   writeLog("status: " + post.status);
-  // };
+  // Registration is a PUT call to the remote server.
+  var post = new XMLHttpRequest();
+  post.open('POST', endpoint);
+  // post.setRequestHeader("Content-Type",
+  //         "application/x-www-form-urlencoded");
+  post.onload = function(e) {
+    writeLog("xhr got data: " + e.target.response);
+  };
+  post.onerror = function(e) {
+    // writeLog("received: " + e);
+    writeLog("status: " + post.status);
+  };
 
-  // writeLog("Sending endpoint..." + endpoint);
-  // post.send("push=" + encodeURIComponent(endpoint));
+  writeLog("Sending endpoint..." + endpoint);
+  post.send("push=" + encodeURIComponent(endpoint));
 }
 
 function sendMail() {

@@ -46,7 +46,10 @@
     <p></p>
     <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">sendMsgToSW</button>
     <hr />
-    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button> <- CORS error working waiting on a deploy to fix</div><br />
+    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button> <- CORS error working waiting on a deploy to fix<br />
+    <button id='webpush_btn' onclick='doWebPush()'>Send WebPush with Crypto</button>
+    </div>
+
     <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
     <p></p>
     <div id='demo'></div>
