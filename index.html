@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="manifest" href="manifest.json">
     <script src='main.js'></script>
-    <script src="webpush.js"></script>
+    <!--  <script src="webpush.js"></script> -->
 
 </head>
 <body onload="checkEnv()">
@@ -46,8 +46,7 @@
     <p></p>
     <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">sendMsgToSW</button>
     <hr />
-    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button> <- CORS error working waiting on a deploy to fix<br />
-    <button id='webpush_btn' onclick='doWebPush()'>Send WebPush with Crypto</button>
+    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button> This works with localhost and web-push-server right now<br />
     </div>
 
     <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>

@@ -15,6 +15,52 @@ function writeLog(txt) {
   console.log(txt);
 }
 
+function chunkArray(array, size) {
+  var start = array.byteOffset || 0;
+  array = array.buffer || array;
+  var index = 0;
+  var result = [];
+  while(index + size <= array.byteLength) {
+    result.push(new Uint8Array(array, start + index, size));
+    index += size;
+  }
+  if (index <= array.byteLength) {
+    result.push(new Uint8Array(array, start + index));
+  }
+  return result;
+}
+
+var base64url = {
+  _strmap: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_',
+  encode: function(data) {
+    data = new Uint8Array(data);
+    var len = Math.ceil(data.length * 4 / 3);
+    return chunkArray(data, 3).map(chunk => [
+      chunk[0] >>> 2,
+      ((chunk[0] & 0x3) << 4) | (chunk[1] >>> 4),
+      ((chunk[1] & 0xf) << 2) | (chunk[2] >>> 6),
+      chunk[2] & 0x3f
+    ].map(v => base64url._strmap[v]).join('')).join('').slice(0, len);
+  },
+  _lookup: function(s, i) {
+    return base64url._strmap.indexOf(s.charAt(i));
+  },
+  decode: function(str) {
+    var v = new Uint8Array(Math.floor(str.length * 3 / 4));
+    var vi = 0;
+    for (var si = 0; si < str.length;) {
+      var w = base64url._lookup(str, si++);
+      var x = base64url._lookup(str, si++);
+      var y = base64url._lookup(str, si++);
+      var z = base64url._lookup(str, si++);
+      v[vi++] = w << 2 | x >>> 4;
+      v[vi++] = x << 4 | y >>> 2;
+      v[vi++] = y << 6 | z;
+    }
+    return v;
+  }
+};
+
  // Notification API
 
 function popNotification() {
@@ -167,13 +213,14 @@ function subscribe() {
         });
     });
 }
-function doWebPush(){
-    writeLog('sending webPush msg - open console to see network errors');
-    webpush(subscription, 'Hello World!').then(function(response){
-      writeLog('webpush returned: ' + response.text);
-    });
+// function doWebPush(){
+//     writeLog('sending webPush msg - open console to see network errors');
+//     webpush(subscription, 'Hello World!').then(function(response){
+//       writeLog('webpush returned: ' + response.text);
+//     });
 
-}
+// }
+
 function doXhr() {
   if (!endpoint || !registration) {
     writeLog('endpoint undefined');
@@ -181,9 +228,21 @@ function doXhr() {
   }
   // Registration is a PUT call to the remote server.
   var post = new XMLHttpRequest();
-  post.open('POST', endpoint);
+  // post.open('POST', 'http://qa.stage.mozaws.net:8001/notify');
+  post.open('POST', 'http://localhost:8001/notify');
   // post.setRequestHeader("Content-Type",
   //         "application/x-www-form-urlencoded");
+
+//Send the proper header information along with the request
+  var params = "endpoint=" + encodeURIComponent(endpoint);
+  params += "&TTL=60&payload=helloWorld";
+  params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
+  // params += "&userPublicKey=" + 'foo';
+  post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  post.setRequestHeader("Content-length", params.length);
+  post.setRequestHeader("Connection", "close");
+
+
   post.onload = function(e) {
     writeLog("xhr got data: " + e.target.response);
   };
@@ -193,31 +252,13 @@ function doXhr() {
   };
 
   writeLog("Sending endpoint..." + endpoint);
-  post.send("push=" + encodeURIComponent(endpoint));
+
+  post.send(params);
 }
 
 function sendMail() {
   window.location = "mailto:MYUSER@mozilla.com?subject=CURL_ME&body=" + chrome_str;
 }
-
-// postMessage
-
-// function sendMessage(message) {
-//   writeLog('page::sendMessage() called:' + message);
-//   navigator.serviceWorker.ready.then(function(reg) {
-//     try {
-//       reg.active.postMessage({
-//         text: message
-//       }, [messageChannel && messageChannel.port2]);
-//     } catch (e) {
-//       // getting a cloning error in Firefox
-//       reg.active.postMessage({
-//         text: message
-//       });
-//     }
-//   });
-
-// }
 
 
 function sendMessage(message) {
