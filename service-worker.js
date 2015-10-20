@@ -11,11 +11,15 @@ function dumpObj(object){
 }
 
 self.addEventListener('push', function(event) {
-  console.log('Received a push message', event);
-
-  var title = 'title: ServiceWorker say: you got a push message';
-  var body = 'body: ServiceWorker say: you got a push message';
-  var icon = 'icon.png';
+  console.log('Received a push message::', event);
+  var obj = event.data.json();
+  // var obj = event.data.json();
+  // console.log('onpush:');
+  // dumpObj(data);
+  console.log('onpush: '+ obj);
+  var title = obj.title;
+  var body = obj.body;
+  var icon = obj.icon;
   var tag = 'simple-push-demo-notification-tag';
 
   event.waitUntil(clients.matchAll().then(function(clientList) {

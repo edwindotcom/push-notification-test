@@ -6,11 +6,12 @@ var chrome_str;
 var count = 0;
 var title_txt = "";
 var body_txt = "";
+var icon_txt = "";
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
-var WEBPUSH_SERVER = 'http://services-qa-webpush.stage.mozaws.net:8001/notify';
+var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
 
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
@@ -67,18 +68,19 @@ var base64url = {
 
 function popNotification() {
   var notificationOptions = {};
+  // var ri_cb = document.getElementById('ri_cb').value;
+  var target_txt = document.getElementById('target_txt').value;
+  var url_txt = document.getElementById('url_txt').value;
 
-  var ri_cb = document.getElementById('ri_cb').value;
-  var icon_txt = document.getElementById('icon_txt').value;
   title_txt = document.getElementById('msg_txt').value;
   body_txt = document.getElementById('body_txt').value;
-  var target_txt = document.getElementById('target_txt').value;
+  icon_txt = document.getElementById('icon_txt').value;
 
-  if(ri_cb === 'true'){
-    notificationOptions.requireInteraction = true;
-  }else if(ri_cb === 'false'){
-    notificationOptions.requireInteraction = false;
-  }
+  // if(ri_cb === 'true'){
+  //   notificationOptions.requireInteraction = true;
+  // }else if(ri_cb === 'false'){
+  //   notificationOptions.requireInteraction = false;
+  // }
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
   notificationOptions.title = title_txt;
@@ -89,7 +91,7 @@ function popNotification() {
   notification.onclick = function(event) {
     event.preventDefault();
     writeLog('notification.onclick: window.open mozilla.org');
-    window.open('http://www.mozilla.org', target_txt);
+    window.open(url_txt, target_txt);
   };
   msg_txt.value = msg_txt.value + '.';
 }
@@ -167,6 +169,7 @@ function regSW() {
   writeLog('registering service worker');
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(sw_txt.value).then(function(reg) {
+      // This only works if you refresh or if you set skipWaiting()
       // swc = navigator.serviceWorker.controller;
       // writeLog('navigator.serviceWorker.controller: ' + swc);
       // writeLog('getRegistration(): ' + swc.getRegistration());
@@ -206,10 +209,11 @@ function subscribe() {
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility = "visible";
           } else {
-            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-            document.getElementById("mailto_btn").style.visibility = "visible";
             document.getElementById("xhr_msg").style.visibility = "visible";
+            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
+            // document.getElementById("mailto_btn").style.visibility = "visible";
           }
+
 
         })
         .catch(function(err) {
@@ -230,6 +234,10 @@ function doXhr() {
     writeLog('endpoint undefined');
     return;
   }
+  title_txt = document.getElementById('msg_txt').value;
+  body_txt = document.getElementById('body_txt').value;
+  ttl_txt = document.getElementById('ttl_txt').value;
+  icon_txt = document.getElementById('icon_txt').value;
   // Registration is a PUT call to the remote server.
   var post = new XMLHttpRequest();
   // post.open('POST', 'http://qa.stage.mozaws.net:8001/notify');
@@ -238,8 +246,13 @@ function doXhr() {
   //         "application/x-www-form-urlencoded");
 
 //Send the proper header information along with the request
+  var json = {"title" : 'SW:'+title_txt,
+              "body" : 'SW:'+body_txt,
+              "icon" : icon_txt};
+
   var params = "endpoint=" + encodeURIComponent(endpoint);
-  params += "&TTL=60&payload="+ title_txt;
+  params += "&TTL=" + ttl_txt;
+  params += "&payload="+ JSON.stringify(json);
   params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
   // params += "&userPublicKey=" + 'foo';
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
