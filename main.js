@@ -14,7 +14,6 @@ var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
 // var WEBPUSH_SERVER = 'http://localhost:8001/notify';
 
-
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
   console.log(txt);
@@ -198,7 +197,6 @@ function subscribe() {
           endpoint = subscription.endpoint;
           writeLog('subscribed: ' + subscription);
           writeLog('endpoint:');
-
           document.getElementById("echo_txt").style.visibility = "visible";
           document.getElementById("sendMsgToSW_btn").style.visibility = "visible";
           if (is_chrome) {
@@ -216,7 +214,6 @@ function subscribe() {
             // document.getElementById("mailto_btn").style.visibility = "visible";
           }
 
-
         })
         .catch(function(err) {
           writeLog('Error during subscribe: ' + err);
@@ -230,6 +227,7 @@ function doXhr() {
     writeLog('endpoint undefined');
     return;
   }
+  sendMsgToSW();
   title_txt = document.getElementById('msg_txt').value;
   body_txt = document.getElementById('body_txt').value;
   ttl_txt = document.getElementById('ttl_txt').value;
@@ -269,6 +267,7 @@ function doXhr() {
   writeLog("Sending endpoint..." + params);
 
   post.send(params);
+
 }
 
 function sendMail() {
@@ -281,6 +280,7 @@ function sendMessage(message) {
   // contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
   // controller.postMessage() and set up the onmessage handler independently of a promise, but this is
   // a convenient wrapper.
+  console.log('sendMessage'+message);
   return new Promise(function(resolve, reject) {
     var messageChannel = new MessageChannel();
     messageChannel.port1.onmessage = function(event) {
@@ -302,13 +302,13 @@ function sendMessage(message) {
 
 // event handlers
 
-// window.onmessage = function(event) {
-//   writeLog("window.onmessage: " + event.data);
-// };
+window.onmessage = function(event) {
+  writeLog("window.onmessage: " + event.data);
+};
 
-// navigator.serviceWorker.onmessage = function(event) {
-//   writeLog("navigator.serviceWorker.onmessage: " + event.data);
-// };
+navigator.serviceWorker.onmessage = function(event) {
+  writeLog("navigator.serviceWorker.onmessage: " + event.data);
+};
 
 // setup
 

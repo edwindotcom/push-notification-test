@@ -38,12 +38,12 @@
     <p></p>
     <hr />
     <p>Push API</p>
-<!-- <select  id='sw_txt'>
-  <option value="service-worker.js" selected>service-worker.js</option>
-  <option value="swc.js">collapse 2 events</option>
-</select> -->
-    <input id='sw_txt' value='service-worker.js'></input>
-    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
+    <select  id='sw_txt'>
+      <option value="service-worker.js" selected>service-worker.js</option>
+      <option value="silent.js">push msg - no notifications</option>
+    </select>
+<!--     <input id='sw_txt' value='service-worker.js'></input>
+ -->    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
     <p></p>
     <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
     <div id='xhr_msg' style="visibility:hidden">

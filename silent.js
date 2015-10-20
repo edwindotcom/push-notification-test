@@ -33,13 +33,13 @@ self.addEventListener('push', function(event) {
     }
   }));
 
-  event.waitUntil(
-    self.registration.showNotification(title, {
-      body: body,
-      icon: icon,
-      tag: tag
-    })
-  );
+  // event.waitUntil(
+  //   self.registration.showNotification(title, {
+  //     body: body,
+  //     icon: icon,
+  //     tag: tag
+  //   })
+  // );
 });
 
 self.addEventListener('message', function(event) {
