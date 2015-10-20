@@ -4,11 +4,13 @@ var subscription;
 var endpoint;
 var chrome_str;
 var count = 0;
-var swc;
+var title_txt = "";
+var body_txt = "";
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
+var WEBPUSH_SERVER = 'http://services-qa-webpush.stage.mozaws.net:8001/notify';
 
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
@@ -65,10 +67,11 @@ var base64url = {
 
 function popNotification() {
   var notificationOptions = {};
-  var title_txt = document.getElementById('msg_txt').value;
+
   var ri_cb = document.getElementById('ri_cb').value;
   var icon_txt = document.getElementById('icon_txt').value;
-  var body_txt = document.getElementById('body_txt').value;
+  title_txt = document.getElementById('msg_txt').value;
+  body_txt = document.getElementById('body_txt').value;
   var target_txt = document.getElementById('target_txt').value;
 
   if(ri_cb === 'true'){
@@ -229,13 +232,13 @@ function doXhr() {
   // Registration is a PUT call to the remote server.
   var post = new XMLHttpRequest();
   // post.open('POST', 'http://qa.stage.mozaws.net:8001/notify');
-  post.open('POST', 'http://localhost:8001/notify');
+  post.open('POST', WEBPUSH_SERVER);
   // post.setRequestHeader("Content-Type",
   //         "application/x-www-form-urlencoded");
 
 //Send the proper header information along with the request
   var params = "endpoint=" + encodeURIComponent(endpoint);
-  params += "&TTL=60&payload=helloWorld";
+  params += "&TTL=60&payload="+ title_txt;
   params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
   // params += "&userPublicKey=" + 'foo';
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

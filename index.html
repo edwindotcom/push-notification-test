@@ -46,11 +46,10 @@
     <p></p>
     <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">sendMsgToSW</button>
     <hr />
-    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>POST to push endpoint</button> This works with localhost and web-push-server right now<br />
-    </div>
-
-    <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
+    <div id='xhr_msg' style="visibility:hidden"><button id='doXhr_btn' onclick='doXhr()'>XHR to webpush appserver</button> 
     <p></p>
+    <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
+    </div>
     <div id='demo'></div>
 </body>
 </html>
