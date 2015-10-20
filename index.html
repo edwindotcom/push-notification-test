@@ -47,6 +47,8 @@
     <p></p>
     <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
     <div id='xhr_msg' style="visibility:hidden">
+        Repeat: <input id='repeat_txt' value='3'></input><br />
+        Delay (seconds): <input id='delay_txt' value='5'></input><br />
         <button id='doXhr_btn' onclick='doXhr()'>XHR to webpush app-server</button> 
     </div>
     <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>

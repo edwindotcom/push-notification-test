@@ -11,7 +11,9 @@ var icon_txt = "";
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
-var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
+// var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
+var WEBPUSH_SERVER = 'http://localhost:8001/notify';
+
 
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
@@ -221,13 +223,7 @@ function subscribe() {
         });
     });
 }
-// function doWebPush(){
-//     writeLog('sending webPush msg - open console to see network errors');
-//     webpush(subscription, 'Hello World!').then(function(response){
-//       writeLog('webpush returned: ' + response.text);
-//     });
 
-// }
 
 function doXhr() {
   if (!endpoint || !registration) {
@@ -238,37 +234,39 @@ function doXhr() {
   body_txt = document.getElementById('body_txt').value;
   ttl_txt = document.getElementById('ttl_txt').value;
   icon_txt = document.getElementById('icon_txt').value;
-  // Registration is a PUT call to the remote server.
-  var post = new XMLHttpRequest();
-  // post.open('POST', 'http://qa.stage.mozaws.net:8001/notify');
-  post.open('POST', WEBPUSH_SERVER);
-  // post.setRequestHeader("Content-Type",
-  //         "application/x-www-form-urlencoded");
 
-//Send the proper header information along with the request
-  var json = {"title" : 'SW:'+title_txt,
+  var repeat_txt = document.getElementById('repeat_txt').value;
+  var delay_txt = document.getElementById('delay_txt').value;
+
+  var post = new XMLHttpRequest();
+  post.open('POST', WEBPUSH_SERVER);
+
+  //Send the proper header information along with the request
+  var obj = {"title" : 'SW:'+title_txt,
               "body" : 'SW:'+body_txt,
               "icon" : icon_txt};
 
   var params = "endpoint=" + encodeURIComponent(endpoint);
   params += "&TTL=" + ttl_txt;
-  params += "&payload="+ JSON.stringify(json);
+  params += "&repeat=" + repeat_txt * 1;
+  params += "&delay=" + delay_txt * 1000;
+  params += "&payload="+ JSON.stringify(obj);
   params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
-  // params += "&userPublicKey=" + 'foo';
+
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   post.setRequestHeader("Content-length", params.length);
   post.setRequestHeader("Connection", "close");
 
 
   post.onload = function(e) {
-    writeLog("xhr got data: " + e.target.response);
+    writeLog("xhr got data " + e.target.response);
   };
   post.onerror = function(e) {
     // writeLog("received: " + e);
     writeLog("status: " + post.status);
   };
 
-  writeLog("Sending endpoint..." + endpoint);
+  writeLog("Sending endpoint..." + params);
 
   post.send(params);
 }
