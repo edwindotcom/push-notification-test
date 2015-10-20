@@ -11,8 +11,8 @@ var icon_txt = "";
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
-// var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
-var WEBPUSH_SERVER = 'http://localhost:8001/notify';
+var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
+// var WEBPUSH_SERVER = 'http://localhost:8001/notify';
 
 
 function writeLog(txt) {
