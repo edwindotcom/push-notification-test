@@ -1,81 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Push Notification Test</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="manifest" href="manifest.json">
-    <script src="bower_components/fetch/fetch.js"></script>
-    <script src="main.js"></script>
+  <title>Push Notification Test</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="main.js"></script>
 </head>
-<body onload="checkEnv()">
+<body onload="checkEnv();">
+
+  <a href="https://github.com/edmoz/push-notification-test"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+
   <div class="container">
-    <h1>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href="https://github.com/pdehaan/push-notification-test">github src</a><br/><small id="userAgent"></small></h1>
+    <header class="page-header">
+      <h1>Supports Fx42+, Chrome 44, Android Chrome 44<br />
+        <small id="useragent" class="text-muted"></small></h1>
+    </header>
 
-    <section class="well">
-      <h2>Notifications API</h2>
-      <table class="table table-striped">
-        <tbody>
-        <tr>
-          <th><label for="msg_txt">Title:</label></th>
-          <td><input id="msg_txt" value="Hi There"/></td>
-        </tr>
-        <tr>
-          <th><label for="icon_txt">Icon:</label></th>
-          <td><input id="icon_txt" value="icon.png"/></td>
-        </tr>
-        <tr>
-          <th><label for="body_txt">Body Text:</label></th>
-          <td><input id="body_txt" value="body text here"/></td>
-        </tr>
-        <tr>
-          <th><label for="ri_cb">requireInteraction:</label></th>
-          <td><select id="ri_cb">
-            <option value="-1" selected>default</option>
-            <option value="1">true</option>
-            <option value="0">false</option>
-          </select></td>
-        </tr>
-        <tr>
-          <th><label for="target_txt">Target:</label></th>
-          <td><input id="target_txt" value="_blank"/></td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <button onclick="notifyMe();" class="btn btn-primary">pop Notification</button>
-            <button onclick="closeNotification();" class="btn">closeNotification</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <strong>Notification properties</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <label for="msg_txt">Title:</label>
+          <input id="msg_txt" value="Hi There" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="body_txt">Body Text:</label>
+          <input id="body_txt" value="body text here" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="icon_txt">Icon:</label>
+          <input id="icon_txt" value="icon.png" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="ttl_txt">TTL:</label>
+          <small>seconds to send message for offline service workers</small>
+          <input id="ttl_txt" value="60" type="number" class="form-control" />
+        </div>
+      </article>
     </section>
 
-    <section class="well">
-      <h2>Push API</h2>
-      <input id="sw_txt" value="service-worker.js"/>
-      <button onclick="regSW();" class="btn btn-primary">register Service Worker</button>
-      <button onclick="checkSW(registration);" class="btn">Check Service Worker</button>
-      <button onclick="unregSW();" id="unreg_btn" class="btn btn-danger hidden">Unregister Service Worker</button>
-      <p></p>
-      <button onclick="subscribe();" id="subscribe_btn" class="btn btn-success hidden">subscribe to push</button>
-      <p></p>
-      <input id="echo_txt" value="HelloWorld" class="hidden"></input>
-      <button id="sendMsgToSW_btn" onclick="sendMsgToSW();" class="btn hidden">sendMsgToSW</button>
-      <div id="xhr_msg" class="hidden">
-        <button id="doXhr_btn" onclick="doXhr();" class="btn">POST to push endpoint</button> &lt;- CORS error working waiting on a deploy to fix
-      </div>
-      <br />
-      <button id="mailto_btn" onclick="sendMail();" class="btn hidden">mailto:CURL string</button>
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <strong>Notifications API</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <label for="url_txt">window.open:</label>
+          <input id="url_txt" value="https://www.mozilla.org" type="url" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="target_txt">target:</label>
+          <input id="target_txt" value="_blank" class="form-control" />
+        </div>
+        <div class="form-group">
+          <button onclick="notifyMe();" class="btn btn-primary">pop Notification</button>
+          <button onclick="closeNotification();" class="btn btn-default">closeNotification</button>
+        </div>
+      </article>
     </section>
 
-    <section>
-      <pre id="demo"></pre>
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <strong>Push API</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <select id="sw_txt" class="form-control">
+            <option value="service-worker.js" selected>service-worker.js</option>
+            <option value="silent.js">push msg - no notifications</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button onclick="regSW();" class="btn btn-primary">register Service Worker</button>
+          <button onclick="checkSW(registration);" class="btn btn-default">Check Service Worker</button>
+          <button id="unreg_btn" onclick="unregSW();" class="btn btn-danger hidden">Unregister Service Worker</button>
+          <button id="subscribe_btn" onclick="subscribe();" class="btn btn-primary hidden">subscribe to push</button>
+        </div>
+        <div id="xhr_msg" class="hidden">
+          <div class="form-group">
+            <label for="repeat_txt">Repeat:</label>
+            <input id="repeat_txt" value="3" type="number" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="delay_txt">Delay (seconds):</label>
+            <input id="delay_txt" value="5" type="number" class="form-control" />
+          </div>
+          <div class="form-group">
+            <button id="doXhr_btn" onclick="doXhr();" class="btn btn-primary">XHR to webpush app-server</button>
+          </div>
+        </div>
+      </article>
     </section>
 
+    <section id="serviceworker-panel" class="panel panel-default hidden">
+      <header class="panel-heading">
+        <strong>Service Worker</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <label for="echo_txt">Send a string from page to service worker:</label>
+          <input id="echo_txt" value="HelloWorld" class="form-control" />
+        </div>
+        <div class="form-group">
+          <button id="sendMsgToSW_btn" onclick="sendMsgToSW();" class="btn btn-primary">Send postMessage</button>
+        </div>
+      </article>
+    </section>
+
+    <pre id="demo" class="hidden"></pre>
   </div>
+
 </body>
 </html>
-
