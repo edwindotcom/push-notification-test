@@ -8,67 +8,67 @@
     <title>Push Notification Test</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="manifest" href="manifest.json">
+    <script src="bower_components/fetch/fetch.js"></script>
     <script src="main.js"></script>
 </head>
 <body onload="checkEnv()">
   <div class="container">
     <h1>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href="https://github.com/pdehaan/push-notification-test">github src</a><br/><small id="userAgent"></small></h1>
 
-    <section>
+    <section class="well">
       <h2>Notifications API</h2>
-      <table class="table">
-      <tbody>
-      <tr>
-        <th><label for="msg_txt">Title:</label></th>
-        <td><input id="msg_txt" value="Hi There"/></td>
-      </tr>
-      <tr>
-        <th><label for="icon_txt">Icon:</label></th>
-        <td><input id="icon_txt" value="icon.png"/></td>
-      </tr>
-      <tr>
-        <th><label for="body_txt">Body Text:</label></th>
-        <td><input id="body_txt" value="body text here"/></td>
-      </tr>
-      <tr>
-        <th><label for="ri_cb">requireInteraction:</label></th>
-        <td><select id="ri_cb">
-          <option value="default" selected>default</option>
-          <option value="true">true</option>
-          <option value="false">false</option>
-        </select></td>
-      </tr>
-      <tr>
-        <th><label for="target_txt">Target:</label></th>
-        <td><input id="target_txt" value="_blank"/></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <button onclick="notifyMe();" class="btn">pop Notification</button>
-          <button onclick="closeNotification();" class="btn">closeNotification</button>
-        </td>
-      </tr>
-      </tbody>
+      <table class="table table-striped">
+        <tbody>
+        <tr>
+          <th><label for="msg_txt">Title:</label></th>
+          <td><input id="msg_txt" value="Hi There"/></td>
+        </tr>
+        <tr>
+          <th><label for="icon_txt">Icon:</label></th>
+          <td><input id="icon_txt" value="icon.png"/></td>
+        </tr>
+        <tr>
+          <th><label for="body_txt">Body Text:</label></th>
+          <td><input id="body_txt" value="body text here"/></td>
+        </tr>
+        <tr>
+          <th><label for="ri_cb">requireInteraction:</label></th>
+          <td><select id="ri_cb">
+            <option value="-1" selected>default</option>
+            <option value="1">true</option>
+            <option value="0">false</option>
+          </select></td>
+        </tr>
+        <tr>
+          <th><label for="target_txt">Target:</label></th>
+          <td><input id="target_txt" value="_blank"/></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <button onclick="notifyMe();" class="btn btn-primary">pop Notification</button>
+            <button onclick="closeNotification();" class="btn">closeNotification</button>
+          </td>
+        </tr>
+        </tbody>
       </table>
     </section>
 
-    <section>
+    <section class="well">
       <h2>Push API</h2>
-      <input id="sw_txt" value="service-worker.js"></input>
-      <button onclick="regSW();" class="btn">register Service Worker</button>
+      <input id="sw_txt" value="service-worker.js"/>
+      <button onclick="regSW();" class="btn btn-primary">register Service Worker</button>
       <button onclick="checkSW(registration);" class="btn">Check Service Worker</button>
-      <button onclick="unregSW();" id="unreg_btn" class="btn" style="visibility:hidden">Unregister Service Worker</button>
+      <button onclick="unregSW();" id="unreg_btn" class="btn btn-danger hidden">Unregister Service Worker</button>
       <p></p>
-      <button onclick="subscribe();" id="subscribe_btn" class="btn" style="visibility:hidden">subscribe to push</button>
+      <button onclick="subscribe();" id="subscribe_btn" class="btn btn-success hidden">subscribe to push</button>
       <p></p>
-      <input id="echo_txt" value="HelloWorld" style="visibility:hidden"></input>
-      <button onclick="sendMsgToSW();" id="sendMsgToSW_btn" class="btn" style="visibility:hidden">sendMsgToSW</button>
-      <hr />
-      <div id="xhr_msg" style="visibility:hidden">
-        <button id="doXhr_btn" onclick="doXhr();">POST to push endpoint</button> &lt;- CORS error working waiting on a deploy to fix
+      <input id="echo_txt" value="HelloWorld" class="hidden"></input>
+      <button id="sendMsgToSW_btn" onclick="sendMsgToSW();" class="btn hidden">sendMsgToSW</button>
+      <div id="xhr_msg" class="hidden">
+        <button id="doXhr_btn" onclick="doXhr();" class="btn">POST to push endpoint</button> &lt;- CORS error working waiting on a deploy to fix
       </div>
       <br />
-      <button id="mailto_btn" onclick="sendMail();" class="btn" style="visibility:hidden">mailto:CURL string</button>
+      <button id="mailto_btn" onclick="sendMail();" class="btn hidden">mailto:CURL string</button>
     </section>
 
     <section>

@@ -9,16 +9,18 @@ var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 
+
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br/>';
   console.log(txt);
 }
 
+
 // Notification API
 
 function popNotification() {
   var title_txt = document.getElementById('msg_txt').value;
-  var ri_cb = document.getElementById('ri_cb').value;
+  var ri_cb = parseInt(document.getElementById('ri_cb').value, 10);
   var icon_txt = document.getElementById('icon_txt').value;
   var body_txt = document.getElementById('body_txt').value;
   var target_txt = document.getElementById('target_txt').value;
@@ -28,10 +30,8 @@ function popNotification() {
     title: title_txt
   };
 
-  if (ri_cb === 'true') {
-    notificationOptions.requireInteraction = true;
-  } else if (ri_cb === 'false') {
-    notificationOptions.requireInteraction = false;
+  if (ri_cb !== -1) {
+    notificationOptions.requireInteraction = !! ri_cb;
   }
 
   writeLog('notificationOptions: ' + JSON.stringify(notificationOptions));
@@ -40,8 +40,9 @@ function popNotification() {
     writeLog('notification.onclick: window.open mozilla.org');
     window.open('http://www.mozilla.org', target_txt);
   };
-  msg_txt.value = msg_txt.value + '.';
+  // msg_txt.value = msg_txt.value + '.';
 }
+
 
 function notifyMe() {
   // Let's check if the browser supports notifications
@@ -69,11 +70,13 @@ function notifyMe() {
   }
 }
 
+
 function closeNotification() {
   notification.close();
 }
 
- // Service Worker API
+
+// Service Worker API
 function checkSW() {
   writeLog('checking service worker');
 
@@ -93,6 +96,7 @@ function checkSW() {
   }
 }
 
+
 function sendMsgToSW(){
     sendMessage({
         command: echo_txt.value,
@@ -106,21 +110,20 @@ function sendMsgToSW(){
     });
 }
 
+
 function unregSW() {
   registration.unregister().then(function(bool) {
     writeLog('reg.unregister() returned: ' + bool);
   });
 }
 
+
 function regSW() {
   writeLog('registering service worker');
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(sw_txt.value).then(function(registration) {
-      // swc = navigator.serviceWorker.controller;
-      // writeLog('navigator.serviceWorker.controller: ' + swc);
-      // writeLog('getRegistration(): ' + swc.getRegistration());
-      document.getElementById('unreg_btn').style.visibility = 'visible';
-      document.getElementById('subscribe_btn').style.visibility = 'visible';
+      document.getElementById('unreg_btn').classList.remove('hidden');
+      document.getElementById('subscribe_btn').classList.remove('hidden');
       writeLog('registered service worker. scope: ' + registration.scope);
     }).catch(function(error) {
       // registration failed
@@ -128,6 +131,7 @@ function regSW() {
     });
   }
 }
+
 
 function subscribe() {
   navigator.serviceWorker.ready.then(
@@ -141,23 +145,21 @@ function subscribe() {
           writeLog('subscribed: ' + subscription);
           writeLog('endpoint:');
 
-          document.getElementById('echo_txt').style.visibility = 'visible';
-          document.getElementById('sendMsgToSW_btn').style.visibility = 'visible';
+          document.getElementById('echo_txt').classList.remove('hidden');
+          document.getElementById('sendMsgToSW_btn').classList.remove('hidden');
           if (is_chrome) {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
             chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
-            chrome_str += subscriptionId;
-            chrome_str += '\\"]}"';
+            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" ' + GCM_ENDPOINT;
+            chrome_str += ' -d "{\\"registration_ids\\":[\\"' + subscriptionId + '\\"]}"';
             writeLog(chrome_str);
-            document.getElementById('mailto_btn').style.visibility = 'visible';
+            document.getElementById('mailto_btn').classList.remove('hidden');
           } else {
             writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-            document.getElementById('mailto_btn').style.visibility = 'visible';
-            document.getElementById('xhr_msg').style.visibility = 'visible';
+            document.getElementById('mailto_btn').classList.remove('hidden');
+            document.getElementById('xhr_msg').classList.remove('hidden');
           }
-
         })
         .catch(function(err) {
           writeLog('Error during subscribe: ' + err);
@@ -165,50 +167,60 @@ function subscribe() {
     });
 }
 
-function doXhr() {
-  if (!endpoint || !registration) {
-    writeLog('endpoint undefined');
-    return;
-  }
-  // Registration is a PUT call to the remote server.
-  var post = new XMLHttpRequest();
-  post.open('POST', endpoint);
-  // post.setRequestHeader("Content-Type",
-  //         "application/x-www-form-urlencoded");
-  post.onload = function(e) {
-    writeLog('xhr got data: ' + e.target.response);
-  };
-  post.onerror = function(e) {
-    // writeLog("received: " + e);
-    writeLog('status: ' + post.status);
-  };
 
-  writeLog('Sending endpoint...' + endpoint);
-  post.send('push=' + encodeURIComponent(endpoint));
+function doXhr(options) {
+  var data = JSON.stringify({
+    endpoint: endpoint,
+    TTL: 60,
+    userPublicKey: '',
+    payload: 'Hey man'
+  });
+
+  console.log('dump');
+  console.log(data);
+
+  fetch('http://localhost:8001/notify', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: data
+  }).then(function (res) {
+    console.log(res);
+  }).catch(function (err) {
+    console.log('request failed...');
+    console.log(err);
+  });
+  console.log('kvetching...');
 }
+
+
+// function doXhr() {
+//   if (!endpoint || !registration) {
+//     writeLog('endpoint undefined');
+//     return;
+//   }
+//   // Registration is a PUT call to the remote server.
+//   var post = new XMLHttpRequest();
+//   post.open('POST', endpoint);
+//   // post.setRequestHeader("Content-Type",
+//   //         "application/x-www-form-urlencoded");
+//   post.onload = function(e) {
+//     writeLog('xhr got data: ' + e.target.response);
+//   };
+//   post.onerror = function(e) {
+//     // writeLog("received: " + e);
+//     writeLog('status: ' + post.status);
+//   };
+//   writeLog('Sending endpoint...' + endpoint);
+//   post.send('push=' + encodeURIComponent(endpoint));
+// }
+
 
 function sendMail() {
   window.location = 'mailto:MYUSER@mozilla.com?subject=CURL_ME&body=' + chrome_str;
 }
-
-// postMessage
-
-// function sendMessage(message) {
-//   writeLog('page::sendMessage() called:' + message);
-//   navigator.serviceWorker.ready.then(function(reg) {
-//     try {
-//       reg.active.postMessage({
-//         text: message
-//       }, [messageChannel && messageChannel.port2]);
-//     } catch (e) {
-//       // getting a cloning error in Firefox
-//       reg.active.postMessage({
-//         text: message
-//       });
-//     }
-//   });
-
-// }
 
 
 function sendMessage(message) {
@@ -231,21 +243,9 @@ function sendMessage(message) {
     // will in turn trigger the onmessage handler on messageChannel.port1.
     // See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage
     registration.active.postMessage(message, [messageChannel.port2]);
-    // navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
   });
 }
 
-// event handlers
-
-// window.onmessage = function(event) {
-//   writeLog("window.onmessage: " + event.data);
-// };
-
-// navigator.serviceWorker.onmessage = function(event) {
-//   writeLog("navigator.serviceWorker.onmessage: " + event.data);
-// };
-
-// setup
 
 function checkEnv() {
   console.log('checkEnv');
