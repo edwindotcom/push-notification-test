@@ -81,7 +81,6 @@ function popNotification() {
   notificationOptions.icon = icon_txt;
   notificationOptions.title = title_txt;
 
-
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
   notification = new Notification(title_txt, notificationOptions);
   notification.onclick = function(event) {
@@ -185,31 +184,33 @@ function subscribe() {
     function(serviceWorkerRegistration) {
       // Do we already have a push message subscription?
       serviceWorkerRegistration.pushManager.subscribe({
-          userVisibleOnly: true
-        }).then(function(sub) {
-          subscription = sub;
-          endpoint = subscription.endpoint;
-          writeLog('subscribed: ' + subscription);
-          writeLog('endpoint:');
-          document.getElementById("echo_txt").classList.remove('hidden');
-          document.getElementById("sendMsgToSW_btn").classList.remove('hidden');
-          if (is_chrome) {
-            var endpointSections = endpoint.split('/');
-            var subscriptionId = endpointSections[endpointSections.length - 1];
-            chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
-            chrome_str += subscriptionId;
-            chrome_str += '\\"]}"';
-            writeLog(chrome_str);
-            document.getElementById("mailto_btn").classList.remove('hidden');
-          } else {
-            document.getElementById("xhr_msg").classList.remove('hidden');
-            document.getElementById('serviceworker-panel').classList.remove('hidden');
-            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-          }
-        }).catch(function(err) {
-          writeLog('Error during subscribe: ' + err);
-        });
+        userVisibleOnly: true
+      }).then(function(sub) {
+        subscription = sub;
+        endpoint = subscription.endpoint;
+        writeLog('subscribed: ' + subscription);
+        writeLog('endpoint:');
+
+        document.getElementById("echo_txt").classList.remove('hidden');
+        document.getElementById("sendMsgToSW_btn").classList.remove('hidden');
+
+        if (is_chrome) {
+          var endpointSections = endpoint.split('/');
+          var subscriptionId = endpointSections[endpointSections.length - 1];
+          chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
+          chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+          chrome_str += subscriptionId;
+          chrome_str += '\\"]}"';
+          writeLog(chrome_str);
+          document.getElementById("mailto_btn").classList.remove('hidden');
+        } else {
+          document.getElementById("xhr_msg").classList.remove('hidden');
+          document.getElementById('serviceworker-panel').classList.remove('hidden');
+          writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
+        }
+      }).catch(function(err) {
+        writeLog('Error during subscribe: ' + err);
+      });
     });
 }
 
@@ -256,7 +257,6 @@ function doXhr() {
     // writeLog("received: " + e);
     writeLog("status: " + post.status);
   };
-
   post.send(params);
 
   writeLog("Sending endpoint..." + params);
