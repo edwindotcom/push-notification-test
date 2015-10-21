@@ -12,10 +12,11 @@ var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
-// var WEBPUSH_SERVER = 'http://localhost:8001/notify';
 
 function writeLog(txt) {
-  document.getElementById("demo").innerHTML += txt + '<br>';
+  var log = document.getElementById("demo");
+  log.innerHTML += txt + '<br/>';
+  log.classList.remove('hidden');
   console.log(txt);
 }
 
@@ -65,8 +66,7 @@ var base64url = {
   }
 };
 
- // Notification API
-
+// Notification API
 function popNotification() {
   var notificationOptions = {};
   // var ri_cb = document.getElementById('ri_cb').value;
@@ -77,15 +77,9 @@ function popNotification() {
   body_txt = document.getElementById('body_txt').value;
   icon_txt = document.getElementById('icon_txt').value;
 
-  // if(ri_cb === 'true'){
-  //   notificationOptions.requireInteraction = true;
-  // }else if(ri_cb === 'false'){
-  //   notificationOptions.requireInteraction = false;
-  // }
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
   notificationOptions.title = title_txt;
-
 
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
   notification = new Notification(title_txt, notificationOptions);
@@ -161,8 +155,8 @@ function sendMsgToSW(){
 }
 
 function unregSW() {
-  registration.unregister().then(function(boolean) {
-    writeLog('reg.unregister() returned: ' + boolean);
+  registration.unregister().then(function(bool) {
+    writeLog('reg.unregister() returned: ' + bool);
   });
 }
 
@@ -175,8 +169,8 @@ function regSW() {
       // writeLog('navigator.serviceWorker.controller: ' + swc);
       // writeLog('getRegistration(): ' + swc.getRegistration());
       registration = reg;
-      document.getElementById("unreg_btn").style.visibility = "visible";
-      document.getElementById("subscribe_btn").style.visibility = "visible";
+      document.getElementById("unreg_btn").classList.remove('hidden');
+      document.getElementById("subscribe_btn").classList.remove('hidden');
       writeLog('registered service worker. scope: ' + registration.scope);
     }).catch(function(error) {
       // registration failed
@@ -188,36 +182,35 @@ function regSW() {
 function subscribe() {
   navigator.serviceWorker.ready.then(
     function(serviceWorkerRegistration) {
-      // Do we already have a push message subscription?  
+      // Do we already have a push message subscription?
       serviceWorkerRegistration.pushManager.subscribe({
-          userVisibleOnly: true
-        })
-        .then(function(sub) {
-          subscription = sub;
-          endpoint = subscription.endpoint;
-          writeLog('subscribed: ' + subscription);
-          writeLog('endpoint:');
-          document.getElementById("echo_txt").style.visibility = "visible";
-          document.getElementById("sendMsgToSW_btn").style.visibility = "visible";
-          if (is_chrome) {
-            var endpointSections = endpoint.split('/');
-            var subscriptionId = endpointSections[endpointSections.length - 1];
-            chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
-            chrome_str += subscriptionId;
-            chrome_str += '\\"]}"';
-            writeLog(chrome_str);
-            document.getElementById("mailto_btn").style.visibility = "visible";
-          } else {
-            document.getElementById("xhr_msg").style.visibility = "visible";
-            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
-            // document.getElementById("mailto_btn").style.visibility = "visible";
-          }
+        userVisibleOnly: true
+      }).then(function(sub) {
+        subscription = sub;
+        endpoint = subscription.endpoint;
+        writeLog('subscribed: ' + subscription);
+        writeLog('endpoint:');
 
-        })
-        .catch(function(err) {
-          writeLog('Error during subscribe: ' + err);
-        });
+        document.getElementById("echo_txt").classList.remove('hidden');
+        document.getElementById("sendMsgToSW_btn").classList.remove('hidden');
+
+        if (is_chrome) {
+          var endpointSections = endpoint.split('/');
+          var subscriptionId = endpointSections[endpointSections.length - 1];
+          chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
+          chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+          chrome_str += subscriptionId;
+          chrome_str += '\\"]}"';
+          writeLog(chrome_str);
+          document.getElementById("mailto_btn").classList.remove('hidden');
+        } else {
+          document.getElementById("xhr_msg").classList.remove('hidden');
+          document.getElementById('serviceworker-panel').classList.remove('hidden');
+          writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
+        }
+      }).catch(function(err) {
+        writeLog('Error during subscribe: ' + err);
+      });
     });
 }
 
@@ -240,9 +233,11 @@ function doXhr() {
   post.open('POST', WEBPUSH_SERVER);
 
   //Send the proper header information along with the request
-  var obj = {"title" : 'SW:'+title_txt,
-              "body" : 'SW:'+body_txt,
-              "icon" : icon_txt};
+  var obj = {
+    title: 'SW:' + title_txt,
+    body: 'SW:' + body_txt,
+    icon: icon_txt
+  };
 
   var params = "endpoint=" + encodeURIComponent(endpoint);
   params += "&TTL=" + ttl_txt;
@@ -255,7 +250,6 @@ function doXhr() {
   post.setRequestHeader("Content-length", params.length);
   post.setRequestHeader("Connection", "close");
 
-
   post.onload = function(e) {
     writeLog("xhr got data " + e.target.response);
   };
@@ -263,17 +257,14 @@ function doXhr() {
     // writeLog("received: " + e);
     writeLog("status: " + post.status);
   };
-
-  writeLog("Sending endpoint..." + params);
-
   post.send(params);
 
+  writeLog("Sending endpoint..." + params);
 }
 
 function sendMail() {
   window.location = "mailto:MYUSER@mozilla.com?subject=CURL_ME&body=" + chrome_str;
 }
-
 
 function sendMessage(message) {
   // This wraps the message posting/response in a promise, which will resolve if the response doesn't
@@ -314,6 +305,7 @@ navigator.serviceWorker.onmessage = function(event) {
 
 function checkEnv() {
   console.log('checkEnv');
+  document.getElementById('useragent').innerHTML = navigator.userAgent;
   if (!('serviceWorker' in navigator)) {
     writeLog('Your Browser doesn\'t support ServiceWorkers');
   }
@@ -324,5 +316,4 @@ function checkEnv() {
     window.location = document.URL.replace("http://", "https://");
     writeLog("You need to be on https or localhost");
   }
-
 }

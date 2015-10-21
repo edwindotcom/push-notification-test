@@ -1,65 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Push Notification Test</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="manifest" href="manifest.json">
-    <script src='main.js'></script>
-    <!--  <script src="webpush.js"></script> -->
-
+  <title>Push Notification Test</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="main.js"></script>
 </head>
-<body onload="checkEnv()">
-    <p>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
-    <hr />
-    Notification properties:<br />
-    Title: <input id='msg_txt' value='Hi There'></input><br />
-    Body Text:
-    <input id='body_txt' value='body text here'></input><br />
-    Icon:
-    <input id='icon_txt' value='icon.png'></input><br />
-    TTL: <input id='ttl_txt' value='60'></input> seconds to send message for offline service workers:<br />
-    <hr />
-    <p>Notifications API</p>
-<!--     requireInteraction: 
-     <select id='ri_cb'>
-      <option value="default" selected>default</option>
-      <option value="true">true</option>
-      <option value="false">false</option>
-    </select> <br /> -->
+<body onload="checkEnv();">
 
-    <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
-    
-    <button onclick='notifyMe()'>pop Notification</button> window.open:<input id='url_txt' value='http://www.mozilla.org'></input><input id='target_txt' value='_blank'></input> <br />
-    <button onclick='closeNotification()'>closeNotification</button>
-    <p></p>
-    <hr />
-    <p>Push API</p>
-    <select  id='sw_txt'>
-      <option value="service-worker.js" selected>service-worker.js</option>
-      <option value="silent.js">push msg - no notifications</option>
-    </select>
-<!--     <input id='sw_txt' value='service-worker.js'></input>
- -->    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
-    <p></p>
-    <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
-    <div id='xhr_msg' style="visibility:hidden">
-        Repeat: <input id='repeat_txt' value='3'></input><br />
-        Delay (seconds): <input id='delay_txt' value='5'></input><br />
-        <button id='doXhr_btn' onclick='doXhr()'>XHR to webpush app-server</button> 
-    </div>
-    <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
-    <hr />
-    Service Worker
-    <p></p>
-    Send a string from page to service worker: <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">Send postMessage</button>
-    <hr />
+  <a href="https://github.com/edmoz/push-notification-test"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 
-    <div id='demo'></div>
+  <div class="container">
+    <header class="page-header">
+      <h1>Supports Fx42+, Chrome 44, Android Chrome 44<br />
+        <small id="useragent" class="text-muted"></small></h1>
+    </header>
+
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <strong>Notification properties</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <label for="msg_txt">Title:</label>
+          <input id="msg_txt" value="Hi There" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="body_txt">Body Text:</label>
+          <input id="body_txt" value="body text here" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="icon_txt">Icon:</label>
+          <input id="icon_txt" value="icon.png" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="ttl_txt">TTL:</label>
+          <small>seconds to send message for offline service workers</small>
+          <input id="ttl_txt" value="60" type="number" class="form-control" />
+        </div>
+      </article>
+    </section>
+
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <strong>Notifications API</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <label for="url_txt">window.open:</label>
+          <input id="url_txt" value="https://www.mozilla.org" type="url" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="target_txt">target:</label>
+          <input id="target_txt" value="_blank" class="form-control" />
+        </div>
+        <div class="form-group">
+          <button onclick="notifyMe();" class="btn btn-primary">pop Notification</button>
+          <button onclick="closeNotification();" class="btn btn-default">closeNotification</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel panel-default">
+      <header class="panel-heading">
+        <strong>Push API</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <select id="sw_txt" class="form-control">
+            <option value="service-worker.js" selected>service-worker.js</option>
+            <option value="silent.js">push msg - no notifications</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button onclick="regSW();" class="btn btn-primary">register Service Worker</button>
+          <button onclick="checkSW(registration);" class="btn btn-default">Check Service Worker</button>
+          <button id="unreg_btn" onclick="unregSW();" class="btn btn-danger hidden">Unregister Service Worker</button>
+          <button id="subscribe_btn" onclick="subscribe();" class="btn btn-primary hidden">subscribe to push</button>
+        </div>
+        <div id="xhr_msg" class="hidden">
+          <div class="form-group">
+            <label for="repeat_txt">Repeat:</label>
+            <input id="repeat_txt" value="3" type="number" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="delay_txt">Delay (seconds):</label>
+            <input id="delay_txt" value="5" type="number" class="form-control" />
+          </div>
+          <div class="form-group">
+            <button id="doXhr_btn" onclick="doXhr();" class="btn btn-primary">XHR to webpush app-server</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="serviceworker-panel" class="panel panel-default hidden">
+      <header class="panel-heading">
+        <strong>Service Worker</strong>
+      </header>
+      <article class="panel-body">
+        <div class="form-group">
+          <label for="echo_txt">Send a string from page to service worker:</label>
+          <input id="echo_txt" value="HelloWorld" class="form-control" />
+        </div>
+        <div class="form-group">
+          <button id="sendMsgToSW_btn" onclick="sendMsgToSW();" class="btn btn-primary">Send postMessage</button>
+        </div>
+      </article>
+    </section>
+
+    <pre id="demo" class="hidden"></pre>
+  </div>
+
 </body>
 </html>
-
-
