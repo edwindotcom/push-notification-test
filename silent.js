@@ -16,8 +16,8 @@ function dumpObj(object){
 self.addEventListener('push', function(event) {
   console.log('Received a push message::', event);
   var obj = event.data.json();
-  var title = 'SW: Title Text';
-  var body = 'SW: Body Text';
+  var title = 'SW: Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text';
+  var body = 'SW: Body Text (Chrome doesn\'t support data in 44) Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum';
   var icon = 'icon.png';
   var tag = 'foo';
   if (is_chrome === false){
