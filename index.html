@@ -9,11 +9,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="manifest" href="manifest.json">
     <script src='main.js'></script>
-    <!--  <script src="webpush.js"></script> -->
 
 </head>
 <body onload="checkEnv()">
-    <p>Supports Fx42+, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
+    <p>Supports Fx44, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
     <hr />
     Notification properties:<br />
     Title: <input id='msg_txt' value='Hi There'></input><br />
@@ -42,22 +41,22 @@
       <option value="service-worker.js" selected>service-worker.js</option>
       <option value="silent.js">push msg - no notifications</option>
     </select>
-<!--     <input id='sw_txt' value='service-worker.js'></input>
- -->    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
+    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
     <p></p>
     <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
     <div id='xhr_msg' style="visibility:hidden">
         Repeat: <input id='repeat_txt' value='3'></input><br />
-        Delay (seconds): <input id='delay_txt' value='5'></input><br />
+        Delay (seconds): <input id='delay_txt' value='8'></input><br />
         <button id='doXhr_btn' onclick='doXhr()'>XHR to webpush app-server</button> 
     </div>
     <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
     <hr />
+    <div id='sw_div' style="visibility:hidden">
     Service Worker
     <p></p>
-    Send a string from page to service worker: <input id='echo_txt' value='HelloWorld' style="visibility:hidden"></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" style="visibility:hidden">Send postMessage</button>
+    Send a string from page to service worker: <input id='echo_txt' value='HelloWorld'></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" >Send postMessage</button>
     <hr />
-
+    </div>
     <div id='demo'></div>
 </body>
 </html>

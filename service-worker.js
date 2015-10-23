@@ -3,6 +3,8 @@
 var port;
 var count = 1;
 
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+
 function dumpObj(object){
   console.log(':dumpObj:');
   for (var property in object) {
@@ -15,15 +17,17 @@ function dumpObj(object){
 
 self.addEventListener('push', function(event) {
   console.log('Received a push message::', event);
-  var obj = event.data.json();
-  // var obj = event.data.json();
-  // console.log('onpush:');
-  // dumpObj(data);
-  // console.log('onpush: '+ obj);
-  var title = obj.title;
-  var body = obj.body;
-  var icon = obj.icon;
-  var tag = 'simple-push-demo-notification-tag';
+  var title = 'SW: Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text';
+  var body = 'SW: Body Text (Chrome doesn\'t support data in 44) Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum';
+  var icon = 'icon.png';
+  var tag = 'foo';
+  if (is_chrome === false){
+    var obj = event.data.json();
+    title = obj.title;
+    body = obj.body;
+    icon = obj.icon;
+    tag = 'simple-push-demo-notification-tag';
+  }
 
   event.waitUntil(clients.matchAll().then(function(clientList) {
     for (var i = 0; i < clientList.length; i++) {

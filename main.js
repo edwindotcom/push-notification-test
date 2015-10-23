@@ -11,8 +11,11 @@ var icon_txt = "";
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
+
 var WEBPUSH_SERVER = 'https://services-qa-webpush.stage.mozaws.net/notify';
-// var WEBPUSH_SERVER = 'http://localhost:8001/notify';
+if (document.URL.indexOf('localhost') > 0){
+  WEBPUSH_SERVER = 'http://localhost:8001/notify';
+}
 
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
@@ -93,6 +96,9 @@ function popNotification() {
     event.preventDefault();
     writeLog('notification.onclick: window.open mozilla.org');
     window.open(url_txt, target_txt);
+  };
+  notification.onshow = function(event){
+    writeLog('notification.onshow');
   };
   msg_txt.value = msg_txt.value + '.';
 }
@@ -198,7 +204,7 @@ function subscribe() {
           writeLog('subscribed: ' + subscription);
           writeLog('endpoint:');
           document.getElementById("echo_txt").style.visibility = "visible";
-          document.getElementById("sendMsgToSW_btn").style.visibility = "visible";
+          document.getElementById("sw_div").style.visibility = "visible";
           if (is_chrome) {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
@@ -209,11 +215,10 @@ function subscribe() {
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility = "visible";
           } else {
-            document.getElementById("xhr_msg").style.visibility = "visible";
             writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
             // document.getElementById("mailto_btn").style.visibility = "visible";
           }
-
+          document.getElementById("xhr_msg").style.visibility = "visible";
         })
         .catch(function(err) {
           writeLog('Error during subscribe: ' + err);
@@ -232,7 +237,7 @@ function doXhr() {
   body_txt = document.getElementById('body_txt').value;
   ttl_txt = document.getElementById('ttl_txt').value;
   icon_txt = document.getElementById('icon_txt').value;
-
+  msg_txt.value = msg_txt.value + '.';
   var repeat_txt = document.getElementById('repeat_txt').value;
   var delay_txt = document.getElementById('delay_txt').value;
 
@@ -248,8 +253,10 @@ function doXhr() {
   params += "&TTL=" + ttl_txt;
   params += "&repeat=" + repeat_txt * 1;
   params += "&delay=" + delay_txt * 1000;
-  params += "&payload="+ JSON.stringify(obj);
-  params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
+  if (!(is_chrome)){
+    params += "&payload="+ JSON.stringify(obj);
+    params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
+  }
 
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   post.setRequestHeader("Content-length", params.length);

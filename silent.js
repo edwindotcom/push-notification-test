@@ -16,14 +16,17 @@ function dumpObj(object){
 self.addEventListener('push', function(event) {
   console.log('Received a push message::', event);
   var obj = event.data.json();
-  // var obj = event.data.json();
-  // console.log('onpush:');
-  // dumpObj(data);
-  // console.log('onpush: '+ obj);
-  var title = obj.title;
-  var body = obj.body;
-  var icon = obj.icon;
-  var tag = 'simple-push-demo-notification-tag';
+  var title = 'SW: Title Text';
+  var body = 'SW: Body Text';
+  var icon = 'icon.png';
+  var tag = 'foo';
+  if (is_chrome === false){
+    var obj = event.data.json();
+    title = obj.title;
+    body = obj.body;
+    icon = obj.icon;
+    tag = 'simple-push-demo-notification-tag';
+  }
 
   event.waitUntil(clients.matchAll().then(function(clientList) {
     for (var i = 0; i < clientList.length; i++) {
