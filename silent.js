@@ -3,28 +3,23 @@
 var port;
 var count = 1;
 
-function dumpObj(object){
-  console.log(':dumpObj:');
-  for (var property in object) {
-    console.log('::'+ property + ":" + object[property]);
-    if (object.hasOwnProperty(property)) {
-        console.log('::' + property + ":" + object[property]);
-    }
-  }
-}
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+var title = 'SW: Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text';
+var body = 'SW: Body Text (Chrome doesn\'t support data in 44) Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum';
+var icon = 'icon.png';
+var tag = 'my-tag-123';
+var targetUrl = 'https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/onnotificationclick';
+
 
 self.addEventListener('push', function(event) {
   console.log('Received a push message::', event);
-  var obj = event.data.json();
-  var title = 'SW: Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text';
-  var body = 'SW: Body Text (Chrome doesn\'t support data in 44) Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum';
-  var icon = 'icon.png';
-  var tag = 'foo';
+
   if (is_chrome === false){
     var obj = event.data.json();
     title = obj.title;
     body = obj.body;
     icon = obj.icon;
+    targetUrl = obj.targetUrl;
     tag = 'simple-push-demo-notification-tag';
   }
 
@@ -36,14 +31,21 @@ self.addEventListener('push', function(event) {
     }
   }));
 
-  // event.waitUntil(
-  //   self.registration.showNotification(title, {
-  //     body: body,
-  //     icon: icon,
-  //     tag: tag
-  //   })
-  // );
+  // popNotification();
+
 });
+
+function popNotification(){
+  self.registration.showNotification(title, {
+      body: body,
+      icon: icon,
+      tag: tag
+    });
+
+  self.onnotificationclick = function(){
+    clients.openWindow(targetUrl);
+  };
+}
 
 self.addEventListener('message', function(event) {
   console.log('Handling message event:', event);
@@ -52,85 +54,28 @@ self.addEventListener('message', function(event) {
   // call to controller.postMessage(). Therefore, event.ports[0].postMessage() will trigger the onmessage
   // handler from the controlled page.
   // It's up to you how to structure the messages that you send back; this is just one example.
-  port.postMessage('SW echo: ' + event.data.command);
+  port.postMessage('SW echo: ' + event.data.text);
+  if (event.data.command == 'pop'){
+    targetUrl = event.data.url;
+    popNotification();
+  }
+
 });
 
-self.addEventListener('onpushsubscriptionchange', function(event) {
-  console.log('onpushsubscriptionchange: ', event);
+self.addEventListener('pushsubscriptionchange', function(event) {
+  console.log('pushsubscriptionchange: ', event);
 });
 
 self.addEventListener('registration', function(event) {
   console.log('registration: ', event);
-  change();
 });
 
 self.addEventListener('activate', function(event) {
   event.waitUntil(self.clients.claim());
   console.log('activate: ', event);
-  change();
 });
 
 self.addEventListener('install', function(event) {
   event.waitUntil(self.skipWaiting());
   console.log('install event: ', event);
-  change();
 });
-
-
-function change(){
-  console.log('self.clients: ', self.clients);
-  console.log('self.caches: ', self.caches);
-  // dumpObj(self.clients);
-  // dumpObj(self.caches);
-}
-
-
-self.addEventListener('notificationclick', function(event) {
-  console.log('On notification click: ', event.notification.tag);
-  // Android doesn’t close the notification when you click on it
-  // See: http://crbug.com/463146
-  event.notification.close();
-
-  // This looks to see if the current is already open and
-  // focuses if it is
-  event.waitUntil(clients.matchAll({
-    type: "window"
-  }).then(function(clientList) {
-    for (var i = 0; i < clientList.length; i++) {
-      var client = clientList[i];
-      console.log('client.url', client.url);
-      if (client.url == '/' && 'focus' in client)
-        return client.focus();
-    }
-    if (clients.openWindow)
-      return clients.openWindow('/');
-  }));
-
-});
-
-self.addEventListener('install', function(event) { console.log('install event: ', event) });
-
-// self.addEventListener('fetch', function(event) {
-//   console.log('Handling fetch event for', event.request.url);
-
-//   event.respondWith(
-//     caches.match(event.request).then(function(response) {
-//       if (response) {
-//         console.log('Found response in cache:', response);
-
-//         return response;
-//       }
-//       console.log('No response found in cache. About to fetch from network...');
-
-//       return fetch(event.request).then(function(response) {
-//         console.log('Response from network is:', response);
-
-//         return response;
-//       }).catch(function(error) {
-//         console.error('Fetching failed:', error);
-
-//         throw error;
-//       });
-//     })
-//   );
-// });

@@ -12,52 +12,87 @@
 
 </head>
 <body onload="checkEnv()">
-    <p>Supports Fx44, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a></p>
-    <hr />
-    Notification properties:<br />
-    Title: <input id='msg_txt' value='Hi There'></input><br />
-    Body Text:
-    <input id='body_txt' value='body text here'></input><br />
-    Icon:
-    <input id='icon_txt' value='icon.png'></input><br />
-    TTL: <input id='ttl_txt' value='60'></input> seconds to send message for offline service workers:<br />
-    <hr />
-    <p>Notifications API</p>
-<!--     requireInteraction: 
-     <select id='ri_cb'>
-      <option value="default" selected>default</option>
-      <option value="true">true</option>
-      <option value="false">false</option>
-    </select> <br /> -->
+    <div class="container">
+        <p>Supports Fx44, Chrome 44, Android Chrome 44 - <a href='https://github.com/edmoz/push-notification-test'>github src</a><br/>
+        Note: Chrome doesn't support Data in 44 so dynamic text and url isn't support in notification</p>
+        <hr />
 
-    <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
-    
-    <button onclick='notifyMe()'>pop Notification</button> window.open:<input id='url_txt' value='http://www.mozilla.org'></input><input id='target_txt' value='_blank'></input> <br />
-    <button onclick='closeNotification()'>closeNotification</button>
-    <p></p>
-    <hr />
-    <p>Push API</p>
-    <select  id='sw_txt'>
-      <option value="service-worker.js" selected>service-worker.js</option>
-      <option value="silent.js">push msg - no notifications</option>
-    </select>
-    <button onclick='regSW()'>register Service Worker</button><button onclick='checkSW(registration)'>Check Service Worker</button><button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
-    <p></p>
-    <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
-    <div id='xhr_msg' style="visibility:hidden">
-        Repeat: <input id='repeat_txt' value='3'></input><br />
-        Delay (seconds): <input id='delay_txt' value='8'></input><br />
-        <button id='doXhr_btn' onclick='doXhr()'>XHR to webpush app-server</button> 
-    </div>
-    <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
-    <hr />
-    <div id='sw_div' style="visibility:hidden">
-    Service Worker
-    <p></p>
-    Send a string from page to service worker: <input id='echo_txt' value='HelloWorld'></input><button onclick='sendMsgToSW()' id="sendMsgToSW_btn" >Send postMessage</button>
-    <hr />
-    </div>
-    <div id='demo'></div>
+    <section>
+      <h2>Notifications Properties</h2>
+      <table class="table">
+      <tbody>
+      <tr>
+        <th><label for="msg_txt">Title:</label></th>
+        <td><input id="msg_txt" value="Hi There" size="60"/></td>
+      </tr>
+      <tr>
+        <th><label for="body_txt">Body:</label></th>
+        <td><input id="body_txt" value="body text here" size="60"/></td>
+      </tr>
+      <tr>
+        <th><label for="icon_txt">Icon:</label></th>
+        <td><input id="icon_txt" value="icon.png" size="60"/></td>
+      </tr>
+      <tr>
+        <th><label for="url_txt">URL:</label></th>
+        <td><input id="url_txt" value='http://www.mozilla.org?foo=bar' size="60"/></td>
+      </tr>
+      <tr>
+        <th><label for="target_txt">Target:</label></th>
+        <td><input id="target_txt" value="_blank" size="60"/></td>
+      </tr>
+
+      <tr>
+        <th><label for="ttl_txt">TTL - seconds to deliver msg: </label></th>
+        <td><input id="ttl_txt" value="60" size="60"/></td>
+      </tr>
+      </tbody>
+      </table>
+    </section>
+        <h2>Notifications API</h2>
+    <!--     requireInteraction: 
+         <select id='ri_cb'>
+          <option value="default" selected>default</option>
+          <option value="true">true</option>
+          <option value="false">false</option>
+        </select> <br /> -->
+
+        <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
+        <p>
+        <button onclick='notifyMe()'>pop Notification</button>
+        </p>
+        <p>
+        <button onclick='closeNotification()'>closeNotification</button>
+        </p>
+        <hr />
+        <h2>Push API</h2>
+        <select  id='sw_txt'>
+          <option value="service-worker.js" selected>service-worker.js</option>
+          <option value="silent.js">push msg - no notifications</option>
+        </select>
+        <button onclick='regSW()'>register Service Worker</button> 
+        <button onclick='checkSW(registration)'>Check Service Worker</button> 
+        <button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
+        <p></p>
+        <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
+        <div id='xhr_msg' style="visibility:hidden">
+            Repeat: <input id='repeat_txt' value='3'></input><br />
+            Delay (seconds): <input id='delay_txt' value='8'></input><br />
+            <button id='doXhr_btn' onclick='doXhr()'>XHR to webpush app-server</button> 
+            <button id='mailto_btn' onclick='sendMail()' style="visibility:hidden">mailto:CURL string</button>
+            <hr />
+        </div>
+
+
+        <div id='sw_div' style="visibility:hidden">
+        Service Worker
+        <p></p>
+        Send a string from page to service worker: <input id='echo_txt' value='HelloWorld'></input><button onclick="sendMsgToSW('nada')" id="sendMsgToSW_btn" >Send postMessage</button><br />
+        <button onclick="sendMsgToSW('pop')" id="sendMsgToSW_btn" >Pop Notification via SW postMessage</button>
+        <hr />
+        </div>
+        <div id='demo'></div>
+    <div>
 </body>
 </html>
 

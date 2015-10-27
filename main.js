@@ -7,6 +7,9 @@ var count = 0;
 var title_txt = "";
 var body_txt = "";
 var icon_txt = "";
+var url_txt = "";
+var target_txt = "";
+var echo_txt = "";
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
@@ -73,8 +76,8 @@ var base64url = {
 function popNotification() {
   var notificationOptions = {};
   // var ri_cb = document.getElementById('ri_cb').value;
-  var target_txt = document.getElementById('target_txt').value;
-  var url_txt = document.getElementById('url_txt').value;
+  target_txt = document.getElementById('target_txt').value;
+  url_txt = document.getElementById('url_txt').value;
 
   title_txt = document.getElementById('msg_txt').value;
   body_txt = document.getElementById('body_txt').value;
@@ -153,10 +156,14 @@ function checkSW() {
   }
 }
 
-function sendMsgToSW(){
+function sendMsgToSW(action){
+    url_txt = document.getElementById('url_txt').value;
+    echo_txt = document.getElementById('echo_txt').value;
+
     sendMessage({
-        command: echo_txt.value,
-        url: 'url'})
+        command: action,
+        text: echo_txt,
+        url: url_txt})
     .then(function(data) {
         // If the promise resolves, just display a success message.
         writeLog('messageChannel.port1.onmessage: ' + data);
@@ -237,6 +244,7 @@ function doXhr() {
   body_txt = document.getElementById('body_txt').value;
   ttl_txt = document.getElementById('ttl_txt').value;
   icon_txt = document.getElementById('icon_txt').value;
+  url_txt = document.getElementById('url_txt').value;
   msg_txt.value = msg_txt.value + '.';
   var repeat_txt = document.getElementById('repeat_txt').value;
   var delay_txt = document.getElementById('delay_txt').value;
@@ -247,12 +255,14 @@ function doXhr() {
   //Send the proper header information along with the request
   var obj = {"title" : 'SW:'+title_txt,
               "body" : 'SW:'+body_txt,
-              "icon" : icon_txt};
+              "icon" : icon_txt,
+              "targetUrl" : url_txt};
 
   var params = "endpoint=" + encodeURIComponent(endpoint);
   params += "&TTL=" + ttl_txt;
   params += "&repeat=" + repeat_txt * 1;
   params += "&delay=" + delay_txt * 1000;
+
   if (!(is_chrome)){
     params += "&payload="+ JSON.stringify(obj);
     params += "&userPublicKey=" + base64url.encode(subscription.getKey('p256dh'));
