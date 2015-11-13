@@ -82,6 +82,7 @@ function popNotification() {
   title_txt = document.getElementById('msg_txt').value;
   body_txt = document.getElementById('body_txt').value;
   icon_txt = document.getElementById('icon_txt').value;
+  tag_txt = document.getElementById('tag_txt').value;
 
   // if(ri_cb === 'true'){
   //   notificationOptions.requireInteraction = true;
@@ -91,6 +92,7 @@ function popNotification() {
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
   notificationOptions.title = title_txt;
+  notificationOptions.tag = tag_txt;
 
 
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
@@ -149,11 +151,11 @@ function checkSW() {
   } else if (registration.waiting) {
     writeLog('Service worker is waiting');
   }
-  if (registration.active) {
-    writeLog('Service worker active');
-  } else {
-    writeLog('service worker NOT active');
-  }
+  // if (registration.active) {
+  //   writeLog('Service worker active');
+  // } else {
+  //   writeLog('service worker NOT active');
+  // }
 }
 
 function sendMsgToSW(action){
@@ -191,6 +193,10 @@ function regSW() {
       document.getElementById("unreg_btn").style.visibility = "visible";
       document.getElementById("subscribe_btn").style.visibility = "visible";
       writeLog('registered service worker. scope: ' + registration.scope);
+
+      registration.onupdatefound = function(evt) {
+        writeLog('onupdatefound: '+ evt);
+      };
     }).catch(function(error) {
       // registration failed
       writeLog('Registration failed: ' + error);
@@ -222,7 +228,7 @@ function subscribe() {
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility = "visible";
           } else {
-            writeLog('<p>curl -I -X POST --header "TTL: 60" ' + subscription.endpoint + '</p>');
+            writeLog('curl -I -X POST --header "TTL: 60" "' + subscription.endpoint + '"');
             // document.getElementById("mailto_btn").style.visibility = "visible";
           }
           document.getElementById("xhr_msg").style.visibility = "visible";
@@ -242,6 +248,7 @@ function doXhr() {
   sendMsgToSW();
   title_txt = document.getElementById('msg_txt').value;
   body_txt = document.getElementById('body_txt').value;
+  tag_txt = document.getElementById('tag_txt').value;
   ttl_txt = document.getElementById('ttl_txt').value;
   icon_txt = document.getElementById('icon_txt').value;
   url_txt = document.getElementById('url_txt').value;
@@ -255,6 +262,7 @@ function doXhr() {
   //Send the proper header information along with the request
   var obj = {"title" : 'SW:'+title_txt,
               "body" : 'SW:'+body_txt,
+              "tag" : tag_txt,
               "icon" : icon_txt,
               "targetUrl" : url_txt};
 

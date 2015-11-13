@@ -19,8 +19,8 @@ self.addEventListener('push', function(event) {
     title = obj.title;
     body = obj.body;
     icon = obj.icon;
+    tag = obj.tag;
     targetUrl = obj.targetUrl;
-    tag = 'simple-push-demo-notification-tag';
   }
 
   event.waitUntil(clients.matchAll().then(function(clientList) {

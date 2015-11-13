@@ -30,6 +30,10 @@
         <td><input id="body_txt" value="body text here" size="60"/></td>
       </tr>
       <tr>
+        <th><label for="tag_txt">Tag: (if same will replace vs add)</label></th>
+        <td><input id="tag_txt" value="" size="60"/></td>
+      </tr>
+      <tr>
         <th><label for="icon_txt">Icon:</label></th>
         <td><input id="icon_txt" value="icon.png" size="60"/></td>
       </tr>
@@ -71,7 +75,7 @@
           <option value="silent.js">push msg - no notifications</option>
         </select>
         <button onclick='regSW()'>register Service Worker</button> 
-        <button onclick='checkSW(registration)'>Check Service Worker</button> 
+<!--         <button onclick='checkSW(registration)'>Check Service Worker</button>  -->
         <button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
         <p></p>
         <button onclick='subscribe()' id="subscribe_btn" style="visibility:hidden">subscribe to push</button>
