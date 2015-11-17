@@ -14,7 +14,7 @@ var targetUrl = 'https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerG
 self.addEventListener('push', function(event) {
   console.log('Received a push message::', event);
 
-  if (is_chrome === false){
+  if (event.data){
     var obj = event.data.json();
     title = obj.title;
     body = obj.body;
@@ -24,6 +24,7 @@ self.addEventListener('push', function(event) {
   }
 
   event.waitUntil(clients.matchAll().then(function(clientList) {
+    popNotification();
     for (var i = 0; i < clientList.length; i++) {
       var client = clientList[i];
       client.postMessage("Push Event Count: " + count);
@@ -31,7 +32,7 @@ self.addEventListener('push', function(event) {
     }
   }));
 
-  popNotification();
+
 
 });
 
