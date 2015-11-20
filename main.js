@@ -220,13 +220,13 @@ function subscribe() {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
             chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+            chrome_str += ' --header "ttl: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
             chrome_str += subscriptionId;
             chrome_str += '\\"]}"';
             writeLog(chrome_str);
             document.getElementById("mailto_btn").style.visibility = "visible";
           } else {
-            writeLog('curl -I -X POST --header "TTL: 60" "' + subscription.endpoint + '"');
+            writeLog('curl -I -X POST --header "ttl: 60" "' + subscription.endpoint + '"');
             // document.getElementById("mailto_btn").style.visibility = "visible";
           }
           document.getElementById("xhr_msg").style.visibility = "visible";
@@ -257,7 +257,7 @@ function doXhr() {
               "targetUrl" : url_txt};
 
   var params = "endpoint=" + encodeURIComponent(endpoint);
-  params += "&TTL=" + ttl_txt;
+  params += "&ttl=" + ttl_txt;
   params += "&repeat=" + repeat_txt * 1;
   params += "&delay=" + delay_txt * 1000;
 
@@ -267,9 +267,8 @@ function doXhr() {
   }
 
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  post.setRequestHeader("Content-length", params.length);
-  post.setRequestHeader("Connection", "close");
-
+  // post.setRequestHeader("Content-length", params.length);
+  // post.setRequestHeader("Connection", "close");
 
   post.onload = function(e) {
     writeLog("xhr got data " + e.target.response);
@@ -280,7 +279,7 @@ function doXhr() {
   };
 
   writeLog("Sending endpoint..." + params);
-
+ 
   post.send(params);
 
 }
@@ -338,7 +337,7 @@ function checkFormVars(){
   sw_txt = document.getElementById('sw_txt').value;
   url_txt = document.getElementById('url_txt').value;
   echo_txt = document.getElementById('echo_txt').value;
-
+  ttl_txt = document.getElementById('ttl_txt').value;
   repeat_txt = document.getElementById('repeat_txt').value;
   delay_txt = document.getElementById('delay_txt').value;
 }
