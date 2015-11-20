@@ -271,10 +271,11 @@ function doXhr() {
   // post.setRequestHeader("Connection", "close");
 
   post.onload = function(e) {
-    writeLog("xhr got data " + e.target.response);
+    writeLog("xhr onload: " + e.target.response);
+    writeLog("status: " + post.status);
   };
   post.onerror = function(e) {
-    // writeLog("received: " + e);
+    writeLog("xhr onerror: " + e.target.response);
     writeLog("status: " + post.status);
   };
 
