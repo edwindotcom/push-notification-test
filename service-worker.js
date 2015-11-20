@@ -7,9 +7,8 @@ var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var title = 'SW: Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text';
 var body = 'SW: Body Text (Chrome doesn\'t support data in 44) Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum';
 var icon = 'icon.png';
-var tag = 'my-tag-123';
+var tag = '';
 var targetUrl = 'https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/onnotificationclick';
-
 
 self.addEventListener('push', function(event) {
   console.log('Received a push message::', event);
@@ -31,8 +30,6 @@ self.addEventListener('push', function(event) {
       count++;
     }
   }));
-
-
 
 });
 

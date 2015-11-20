@@ -10,6 +10,10 @@ var icon_txt = "";
 var url_txt = "";
 var target_txt = "";
 var echo_txt = "";
+var ri_cb = "";
+var repeat_txt = "";
+var delay_txt = "";
+var sw_txt = "";
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
@@ -20,6 +24,7 @@ if (document.URL.indexOf('localhost') > 0){
   WEBPUSH_SERVER = 'http://localhost:8001/notify';
 }
 
+//Utils
 function writeLog(txt) {
   document.getElementById("demo").innerHTML += txt + '<br>';
   console.log(txt);
@@ -72,23 +77,15 @@ var base64url = {
 };
 
  // Notification API
-
 function popNotification() {
   var notificationOptions = {};
-  // var ri_cb = document.getElementById('ri_cb').value;
-  target_txt = document.getElementById('target_txt').value;
-  url_txt = document.getElementById('url_txt').value;
+  checkFormVars();
 
-  title_txt = document.getElementById('msg_txt').value;
-  body_txt = document.getElementById('body_txt').value;
-  icon_txt = document.getElementById('icon_txt').value;
-  tag_txt = document.getElementById('tag_txt').value;
-
-  // if(ri_cb === 'true'){
-  //   notificationOptions.requireInteraction = true;
-  // }else if(ri_cb === 'false'){
-  //   notificationOptions.requireInteraction = false;
-  // }
+  if(ri_cb === 'true'){
+    notificationOptions.requireInteraction = true;
+  }else if(ri_cb === 'false'){
+    notificationOptions.requireInteraction = false;
+  }
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
   notificationOptions.title = title_txt;
@@ -142,49 +139,50 @@ function closeNotification() {
 function checkSW() {
   writeLog('checking service worker');
 
-  if (typeof registration === 'undefined') {
-    writeLog('service worker registration is undefined');
-    return;
+  if(navigator.serviceWorker.controller){
+      var elem = document.getElementById('reg_btn');
+      var subscribe_btn = document.getElementById("subscribe_btn");
+      elem.parentNode.removeChild(elem);
+      subscribe_btn.parentNode.removeChild(subscribe_btn);
+      document.getElementById("unreg_btn").style.visibility = "visible";
+      // document.getElementById("subscribe_btn").style.visibility = "visible";
+      registration = navigator.serviceWorker.controller;
+      subscribe();
   }
-  if (registration.installing) {
-    writeLog('Service worker installing');
-  } else if (registration.waiting) {
-    writeLog('Service worker is waiting');
-  }
-  // if (registration.active) {
-  //   writeLog('Service worker active');
-  // } else {
-  //   writeLog('service worker NOT active');
-  // }
 }
 
 function sendMsgToSW(action){
-    url_txt = document.getElementById('url_txt').value;
-    echo_txt = document.getElementById('echo_txt').value;
+  checkFormVars();
 
-    sendMessage({
-        command: action,
-        text: echo_txt,
-        url: url_txt})
-    .then(function(data) {
-        // If the promise resolves, just display a success message.
-        writeLog('messageChannel.port1.onmessage: ' + data);
-      }).catch(function(error) {
-      // registration failed
-      writeLog('Registration failed: ' + error);
-    });
+  sendMessage({
+      command: action,
+      text: echo_txt,
+      url: url_txt})
+  .then(function(data) {
+      // If the promise resolves, just display a success message.
+      writeLog('messageChannel.port1.onmessage: ' + data);
+    }).catch(function(error) {
+    // registration failed
+    writeLog('Registration failed: ' + error);
+  });
 }
 
 function unregSW() {
-  registration.unregister().then(function(boolean) {
-    writeLog('reg.unregister() returned: ' + boolean);
+  navigator.serviceWorker.getRegistration().then(function(r) {
+    registration = r;
+    registration.unregister().then(function(evt){
+      writeLog('reg.unregister() returned: ' + evt);
+      writeLog('note: registration isnt deleted till refresh so postMessage still works');
+    });
+
   });
 }
 
 function regSW() {
   writeLog('registering service worker');
+  checkFormVars();
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(sw_txt.value).then(function(reg) {
+    navigator.serviceWorker.register(sw_txt).then(function(reg) {
       // This only works if you refresh or if you set skipWaiting()
       // swc = navigator.serviceWorker.controller;
       // writeLog('navigator.serviceWorker.controller: ' + swc);
@@ -239,22 +237,14 @@ function subscribe() {
     });
 }
 
-
 function doXhr() {
   if (!endpoint || !registration) {
     writeLog('endpoint undefined');
     return;
   }
   sendMsgToSW();
-  title_txt = document.getElementById('msg_txt').value;
-  body_txt = document.getElementById('body_txt').value;
-  tag_txt = document.getElementById('tag_txt').value;
-  ttl_txt = document.getElementById('ttl_txt').value;
-  icon_txt = document.getElementById('icon_txt').value;
-  url_txt = document.getElementById('url_txt').value;
+  checkFormVars();
   msg_txt.value = msg_txt.value + '.';
-  var repeat_txt = document.getElementById('repeat_txt').value;
-  var delay_txt = document.getElementById('delay_txt').value;
 
   var post = new XMLHttpRequest();
   post.open('POST', WEBPUSH_SERVER);
@@ -299,7 +289,6 @@ function sendMail() {
   window.location = "mailto:MYUSER@mozilla.com?subject=CURL_ME&body=" + chrome_str;
 }
 
-
 function sendMessage(message) {
   // This wraps the message posting/response in a promise, which will resolve if the response doesn't
   // contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
@@ -320,13 +309,13 @@ function sendMessage(message) {
     // The service worker can then use the transferred port to reply via postMessage(), which
     // will in turn trigger the onmessage handler on messageChannel.port1.
     // See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage
-    registration.active.postMessage(message, [messageChannel.port2]);
-    // navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
+    // Was an issue with using controller vs active registration but i can't repro anymore
+    // registration.active.postMessage(message, [messageChannel.port2]);
+    navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
   });
 }
 
 // event handlers
-
 window.onmessage = function(event) {
   writeLog("window.onmessage: " + event.data);
 };
@@ -336,6 +325,24 @@ navigator.serviceWorker.onmessage = function(event) {
 };
 
 // setup
+function checkFormVars(){
+  ri_cb = document.getElementById('ri_cb').value;
+
+  target_txt = document.getElementById('target_txt').value;
+  url_txt = document.getElementById('url_txt').value;
+
+  title_txt = document.getElementById('msg_txt').value;
+  body_txt = document.getElementById('body_txt').value;
+  icon_txt = document.getElementById('icon_txt').value;
+  tag_txt = document.getElementById('tag_txt').value;
+  sw_txt = document.getElementById('sw_txt').value;
+  url_txt = document.getElementById('url_txt').value;
+  echo_txt = document.getElementById('echo_txt').value;
+
+  repeat_txt = document.getElementById('repeat_txt').value;
+  delay_txt = document.getElementById('delay_txt').value;
+}
+
 
 function checkEnv() {
   console.log('checkEnv');
@@ -349,5 +356,5 @@ function checkEnv() {
     window.location = document.URL.replace("http://", "https://");
     writeLog("You need to be on https or localhost");
   }
-
+  checkSW();
 }

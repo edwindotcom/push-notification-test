@@ -45,22 +45,24 @@
         <th><label for="target_txt">Target:</label></th>
         <td><input id="target_txt" value="_blank" size="60"/></td>
       </tr>
-
       <tr>
         <th><label for="ttl_txt">TTL - seconds to deliver msg: </label></th>
         <td><input id="ttl_txt" value="60" size="60"/></td>
+      </tr>
+      <tr>
+        <th><label for="ri_cb">requireInteraction: (chrome only)</label></th>
+        <td>
+          <select id='ri_cb'>
+            <option value="default" selected>default</option>
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        </td>
       </tr>
       </tbody>
       </table>
     </section>
         <h2>Notifications API</h2>
-    <!--     requireInteraction: 
-         <select id='ri_cb'>
-          <option value="default" selected>default</option>
-          <option value="true">true</option>
-          <option value="false">false</option>
-        </select> <br /> -->
-
         <!-- <button onclick='checkNotifyProperites()'>Check Notification</button> -->
         <p>
         <button onclick='notifyMe()'>pop Notification</button>
@@ -74,7 +76,7 @@
           <option value="service-worker.js" selected>service-worker.js</option>
           <option value="silent.js">push msg - no notifications</option>
         </select>
-        <button onclick='regSW()'>register Service Worker</button> 
+        <button onclick='regSW()' id='reg_btn'>register Service Worker</button> 
 <!--         <button onclick='checkSW(registration)'>Check Service Worker</button>  -->
         <button onclick='unregSW()' id='unreg_btn' style="visibility:hidden">Unregister Service Worker</button>
         <p></p>
@@ -91,7 +93,7 @@
         <div id='sw_div' style="visibility:hidden">
         Service Worker
         <p></p>
-        Send a string from page to service worker: <input id='echo_txt' value='HelloWorld'></input><button onclick="sendMsgToSW('nada')" id="sendMsgToSW_btn" >Send postMessage</button><br />
+        Send a string from page to service worker (see log below):<input id='echo_txt' value='HelloWorld'></input><button onclick="sendMsgToSW('nada')" id="sendMsgToSW_btn" >Send postMessage</button><br />
         <button onclick="sendMsgToSW('pop')" id="sendMsgToSW_btn" >Pop Notification via SW postMessage</button>
         <hr />
         </div>
