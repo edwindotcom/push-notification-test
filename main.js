@@ -220,7 +220,7 @@ function subscribe() {
             var endpointSections = endpoint.split('/');
             var subscriptionId = endpointSections[endpointSections.length - 1];
             chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "ttl: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
             chrome_str += subscriptionId;
             chrome_str += '\\"]}"';
             writeLog(chrome_str);
@@ -257,7 +257,7 @@ function doXhr() {
               "targetUrl" : url_txt};
 
   var params = "endpoint=" + encodeURIComponent(endpoint);
-  params += "&ttl=" + ttl_txt;
+  params += "&TTL=" + ttl_txt;
   params += "&repeat=" + repeat_txt * 1;
   params += "&delay=" + delay_txt * 1000;
 
@@ -267,8 +267,19 @@ function doXhr() {
   }
 
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  // post.setRequestHeader("Content-length", params.length);
-  // post.setRequestHeader("Connection", "close");
+  post.setRequestHeader("Content-length", params.length);
+  post.setRequestHeader("Connection", "close");
+
+  var encrypted = webPush.encrypt(subscription.getKey('p256dh'), obj);
+  writeLog('encrypted.cipherText: _' + encrypted.cipherText + '_');
+  writeLog("echo '" + base64url.encode(encrypted.cipherText) + "' | base64 -D | curl -I -X POST '" +
+           "--data-binary @- " + 
+           "--header 'TTL: 60' " +
+           "--header 'Content-Type: application/octet-stream' " +
+           "--header 'Content-Encoding: aesgcm128' " +
+           "--header 'Encryption-Key: keyid=p256dh;dh=" + base64url.encode(encrypted.localPublicKey) + "' " +
+           "--header 'Encryption: keyid=p256dh;salt=" + base64url.encode(encrypted.salt) + "' " +
+           "'" + subscription.endpoint + "'");
 
   post.onload = function(e) {
     writeLog("xhr onload: " + e.target.response);
