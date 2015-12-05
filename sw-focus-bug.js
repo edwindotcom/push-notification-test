@@ -26,7 +26,7 @@ self.addEventListener('push', function(event) {
     popNotification();
     for (var i = 0; i < clientList.length; i++) {
       var client = clientList[i];
-      console.log('client.url' + client.url);
+      console.log('client.url' +client.url);
       client.postMessage("Push Event Count: " + count);
       count++;
     }
@@ -41,9 +41,28 @@ function popNotification(){
       tag: tag
     });
 
-  self.onnotificationclick = function(){
-    clients.openWindow(targetUrl);
-  };
+  self.addEventListener('notificationclick', function(event) {  
+    console.log('On notification click: ', event.notification.tag);
+
+    event.waitUntil(
+      clients.matchAll({
+        type: "window"
+      })
+      .then(function(clientList) {
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          console.log('client.url: ' + client.url);
+          if (client){
+              console.log('focus returned: ' + JSON.stringify(evt));
+              return client.focus('about:blank').then(function(evt){
+            }).catch(function(evt){
+              console.log('focus error: ' + JSON.stringify(evt));
+            });
+          }
+        }
+      })
+    );
+  });
 }
 
 self.addEventListener('message', function(event) {

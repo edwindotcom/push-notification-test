@@ -173,6 +173,7 @@ function unregSW() {
     registration.unregister().then(function(evt){
       writeLog('reg.unregister() returned: ' + evt);
       writeLog('note: registration isnt deleted till refresh so postMessage still works');
+      window.location = '.';
     });
 
   });
@@ -270,16 +271,16 @@ function doXhr() {
   post.setRequestHeader("Content-length", params.length);
   post.setRequestHeader("Connection", "close");
 
-  var encrypted = webPush.encrypt(subscription.getKey('p256dh'), obj);
-  writeLog('encrypted.cipherText: _' + encrypted.cipherText + '_');
-  writeLog("echo '" + base64url.encode(encrypted.cipherText) + "' | base64 -D | curl -I -X POST '" +
-           "--data-binary @- " + 
-           "--header 'TTL: 60' " +
-           "--header 'Content-Type: application/octet-stream' " +
-           "--header 'Content-Encoding: aesgcm128' " +
-           "--header 'Encryption-Key: keyid=p256dh;dh=" + base64url.encode(encrypted.localPublicKey) + "' " +
-           "--header 'Encryption: keyid=p256dh;salt=" + base64url.encode(encrypted.salt) + "' " +
-           "'" + subscription.endpoint + "'");
+  // var encrypted = webPush.encrypt(subscription.getKey('p256dh'), obj);
+  // writeLog('encrypted.cipherText: _' + encrypted.cipherText + '_');
+  // writeLog("echo '" + base64url.encode(encrypted.cipherText) + "' | base64 -D | curl -I -X POST '" +
+  //          "--data-binary @- " + 
+  //          "--header 'TTL: 60' " +
+  //          "--header 'Content-Type: application/octet-stream' " +
+  //          "--header 'Content-Encoding: aesgcm128' " +
+  //          "--header 'Encryption-Key: keyid=p256dh;dh=" + base64url.encode(encrypted.localPublicKey) + "' " +
+  //          "--header 'Encryption: keyid=p256dh;salt=" + base64url.encode(encrypted.salt) + "' " +
+  //          "'" + subscription.endpoint + "'");
 
   post.onload = function(e) {
     writeLog("xhr onload: " + e.target.response);
