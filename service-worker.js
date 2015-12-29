@@ -63,6 +63,22 @@ self.addEventListener('message', function(event) {
 
 self.addEventListener('pushsubscriptionchange', function(event) {
   console.log('pushsubscriptionchange: ', event);
+  event.waitUntil(self.registration.pushManager.subscribe({
+    userVisibleOnly: true
+  }).then(function(sub) {
+    var message = {
+      type: 'pushsubscriptionchange',
+      endpoint: sub.endpoint,
+      publicKey: sub.getKey('p256dh'),
+    };
+    return clients.matchAll().then(function(clientList) {
+      clientList.forEach(function(client) {
+        client.postMessage(message);
+      });
+    });
+  }).catch(function(error) {
+    console.error('Error resubscribing', error);
+  }));
 });
 
 self.addEventListener('registration', function(event) {
