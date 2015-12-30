@@ -203,38 +203,40 @@ function regSW() {
   }
 }
 
+function writeSubscription(sub) {
+  subscription = sub;
+  endpoint = subscription.endpoint;
+  writeLog('subscribed: ' + subscription);
+  writeLog('endpoint:');
+  document.getElementById("echo_txt").style.visibility = "visible";
+  document.getElementById("sw_div").style.visibility = "visible";
+  if (is_chrome) {
+    var endpointSections = endpoint.split('/');
+    var subscriptionId = endpointSections[endpointSections.length - 1];
+    chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
+    chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
+    chrome_str += subscriptionId;
+    chrome_str += '\\"]}"';
+    writeLog(chrome_str);
+    document.getElementById("mailto_btn").style.visibility = "visible";
+  } else {
+    writeLog('curl -I -X POST --header "ttl: 60" "' + subscription.endpoint + '"');
+    // document.getElementById("mailto_btn").style.visibility = "visible";
+  }
+  document.getElementById("xhr_msg").style.visibility = "visible";
+}
+
 function subscribe() {
   navigator.serviceWorker.ready.then(
     function(serviceWorkerRegistration) {
-      // Do we already have a push message subscription?  
-      serviceWorkerRegistration.pushManager.subscribe({
-          userVisibleOnly: true
-        })
-        .then(function(sub) {
-          subscription = sub;
-          endpoint = subscription.endpoint;
-          writeLog('subscribed: ' + subscription);
-          writeLog('endpoint:');
-          document.getElementById("echo_txt").style.visibility = "visible";
-          document.getElementById("sw_div").style.visibility = "visible";
-          if (is_chrome) {
-            var endpointSections = endpoint.split('/');
-            var subscriptionId = endpointSections[endpointSections.length - 1];
-            chrome_str = 'curl --header "Authorization: key=' + API_KEY + '"';
-            chrome_str += ' --header "TTL: 60" --header Content-Type:"application/json" https://android.googleapis.com/gcm/send -d "{\\"registration_ids\\":[\\"';
-            chrome_str += subscriptionId;
-            chrome_str += '\\"]}"';
-            writeLog(chrome_str);
-            document.getElementById("mailto_btn").style.visibility = "visible";
-          } else {
-            writeLog('curl -I -X POST --header "ttl: 60" "' + subscription.endpoint + '"');
-            // document.getElementById("mailto_btn").style.visibility = "visible";
-          }
-          document.getElementById("xhr_msg").style.visibility = "visible";
-        })
-        .catch(function(err) {
-          writeLog('Error during subscribe: ' + err);
-        });
+      // Do we already have a push message subscription?
+      return serviceWorkerRegistration.pushManager.subscribe({
+        userVisibleOnly: true
+      });
+    })
+    .then(writeSubscription)
+    .catch(function(err) {
+      writeLog('Error during subscribe: ' + err);
     });
 }
 
@@ -333,7 +335,27 @@ window.onmessage = function(event) {
 };
 
 navigator.serviceWorker.onmessage = function(event) {
-  writeLog("navigator.serviceWorker.onmessage: " + event.data);
+  if (typeof event.data == 'string') {
+    writeLog("navigator.serviceWorker.onmessage: " + event.data);
+    return;
+  }
+  if (event.data.type == 'pushsubscriptionchange') {
+    writeLog('Got pushsubscriptionchange event from service worker');
+    navigator.serviceWorker.getRegistration().then(function(r) {
+      return r.pushManager.getSubscription();
+    }).then(function(sub) {
+      var endpoint = sub.endpoint;
+      if (sub.endpoint != event.data.endpoint) {
+        writeLog('Mismatched subscription endpoint');
+      }
+      if (!buffersAreEqual(event.data.publicKey, sub.getKey('p256dh'))) {
+        writeLog('Mismatched subscription public key');
+      }
+      writeSubscription(sub);
+    }).catch(function(error) {
+      writeLog('Fetching subscription failed: ' + error);
+    });
+  }
 };
 
 // setup
@@ -369,4 +391,23 @@ function checkEnv() {
     writeLog("You need to be on https or localhost");
   }
   checkSW();
+}
+
+function toByteArray(view) {
+  var buffer = ArrayBuffer.isView(view) ? view.buffer : view;
+  return new Uint8Array(buffer);
+}
+
+function buffersAreEqual(a, b) {
+  a = toByteArray(a);
+  b = toByteArray(b);
+  if (a.length != b.length) {
+    return false;
+  }
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) {
+      return false;
+    }
+  }
+  return true;
 }
