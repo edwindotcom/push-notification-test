@@ -55,7 +55,7 @@ function popNotification() {
           clientList[0].focus();
         }else{
           console.log("clients.openWindow()");
-          clients.openWindow("https://people.mozilla.org/~ewong2/push-notification-test/");
+          return clients.openWindow("https://people.mozilla.org/~ewong2/push-notification-test/");
         }
         // for (var i = 0; i < clientList.length; i++) {
         //   var client = clientList[i];

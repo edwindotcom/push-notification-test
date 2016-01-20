@@ -53,8 +53,8 @@ function popNotification(){
           var client = clientList[i];
           console.log('client.url: ' + client.url);
           if (client){
-              console.log('focus returned: ' + JSON.stringify(evt));
-              return client.focus('about:blank').then(function(evt){
+              return client.focus('/').then(function(evt){
+                  console.log('set focus returned: ' + JSON.stringify(evt));
             }).catch(function(evt){
               console.log('focus error: ' + JSON.stringify(evt));
             });
