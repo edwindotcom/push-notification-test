@@ -14,6 +14,7 @@ var ri_cb = "";
 var repeat_txt = "";
 var delay_txt = "";
 var sw_txt = "";
+var floodDelay_txt = "";
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var API_KEY = 'AIzaSyATs7ORhZVUA2vPTizpYgVf1cgjNos7ajg';
@@ -263,6 +264,7 @@ function doXhr() {
   params += "&TTL=" + ttl_txt;
   params += "&repeat=" + repeat_txt * 1;
   params += "&delay=" + delay_txt * 1000;
+  params += "&floodDelay=" + floodDelay_txt * 1000;
 
   if (!(is_chrome)){
     params += "&payload="+ JSON.stringify(obj);
@@ -293,7 +295,7 @@ function doXhr() {
     writeLog("status: " + post.status);
   };
 
-  writeLog("Sending endpoint..." + params);
+  writeLog("POST PARAMS:<br />" + params);
  
   post.send(params);
 
@@ -375,6 +377,7 @@ function checkFormVars(){
   ttl_txt = document.getElementById('ttl_txt').value;
   repeat_txt = document.getElementById('repeat_txt').value;
   delay_txt = document.getElementById('delay_txt').value;
+  floodDelay_txt = document.getElementById('floodDelay_txt').value;
 }
 
 
