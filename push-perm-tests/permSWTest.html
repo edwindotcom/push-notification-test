@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Test Notifications.getPermissions()</title>
+    <link rel="manifest" href="/manifest.json">
+<script>
+
+//Utils
+function log(txt) {
+  document.getElementById("demo").innerHTML += txt + '<br>';
+  console.log(txt);
+}
+
+function requestPermission(){
+    navigator.serviceWorker.register('service-worker.js')
+    .then(function(registration) {
+      // Use the PushManager to get the user's subscription to the push service.
+      return registration.pushManager.getSubscription()
+      .then(function(subscription) {
+        if (subscription) {
+          return subscription;
+        }
+        return registration.pushManager.subscribe({ userVisibleOnly: true })
+                .then(function(pushSubscription) {
+                  log("Got subscription: " + pushSubscription);
+                }, function(error) {
+                  log("Error getting push subscription: " + error);
+                });
+        });
+    });
+}
+
+</script>
+
+</head>
+<body>
+<button onclick="requestPermission()" id="requestPermission">requestPermission</button>
+
+<div id="demo"></div>
+<div id="foo">
+<pre>navigator.serviceWorker.register('service-worker.js')
+    .then(function(registration) {
+      // Use the PushManager to get the user's subscription to the push service.
+      return registration.pushManager.getSubscription()
+      .then(function(subscription) {
+        if (subscription) {
+          return subscription;
+        }
+        return registration.pushManager.subscribe({ userVisibleOnly: true })
+                .then(function(pushSubscription) {
+                  log("Got subscription: " + pushSubscription);
+                }, function(error) {
+                  log("Error getting push subscription: " + error);
+                });
+        });
+    });
+</pre>
+</div>
+
+
+</body></html>

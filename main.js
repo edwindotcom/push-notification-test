@@ -90,7 +90,9 @@ function popNotification() {
   notificationOptions.body = body_txt;
   notificationOptions.icon = icon_txt;
   notificationOptions.title = title_txt;
-  notificationOptions.tag = tag_txt;
+  if (tag_txt !== ""){
+    notificationOptions.tag = tag_txt;
+  }
 
 
   writeLog('notificationOptions: '+ JSON.stringify(notificationOptions));
@@ -255,10 +257,13 @@ function doXhr() {
 
   //Send the proper header information along with the request
   var obj = {"title" : 'SW:'+title_txt,
-              "body" : 'SW:'+body_txt,
-              "tag" : tag_txt,
-              "icon" : icon_txt,
-              "targetUrl" : url_txt};
+             "body" : 'SW:'+body_txt,
+             "icon" : icon_txt,
+             "targetUrl" : url_txt};
+
+  if (tag_txt !== ""){
+    obj["tag"] = tag_txt;
+  }
 
   var params = "endpoint=" + encodeURIComponent(endpoint);
   params += "&TTL=" + ttl_txt;

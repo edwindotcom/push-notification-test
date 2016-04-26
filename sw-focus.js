@@ -7,7 +7,6 @@ var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 var title = 'SW: Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text, Title Text';
 var body = 'SW: Body Text (Chrome doesn\'t support data in 44) Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum';
 var icon = 'icon.png';
-var tag = '';
 var targetUrl = 'https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/onnotificationclick';
 
 self.addEventListener('push', function(event) {
@@ -18,7 +17,6 @@ self.addEventListener('push', function(event) {
     title = obj.title;
     body = obj.body;
     icon = obj.icon;
-    tag = obj.tag;
     targetUrl = obj.targetUrl;
   }
 
@@ -37,8 +35,7 @@ var windowExists = false;
 function popNotification() {
   self.registration.showNotification(title, {
     body: body,
-    icon: icon,
-    tag: tag
+    icon: icon
   });
 
   self.addEventListener('notificationclick', function(event) {

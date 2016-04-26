@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Test Notifications.getPermissions()</title>
+    <link rel="manifest" href="https://people.mozilla.org/%7Eewong2/pushPerms/manifest.json">
+<script>
+
+//Utils
+function log(txt) {
+  document.getElementById("demo").innerHTML += txt + '<br>';
+  console.log(txt);
+}
+
+function getNotificationPermission() {
+    return Notification.requestPermission(function(status) {
+        log('callback called with: ' + status);
+    });
+}
+
+function requestPermission(){
+    getNotificationPermission()
+        .then(function(permission) {
+            log('promise resolve: ' + permission);
+        })
+        .catch(function(error) {
+            log('promise reject: ' + error);
+        });
+}
+
+</script>
+
+</head>
+<body>
+<button onclick="requestPermission()" id="requestPermission">requestPermission</button>
+
+<div id="demo"></div>
+<div id="foo">
+<pre>function getNotificationPermission() {
+    return Notification.requestPermission(function(status) {
+        log('callback called with: ' + status);
+    });
+}
+
+function requestPermission(){
+    getNotificationPermission()
+        .then(function(permission) {
+            log('promise resolve: ' + permission);
+        })
+        .catch(function(error) {
+            log('promise reject: ' + error);
+        });
+}
+</pre>
+</div>
+
+
+</body></html>
